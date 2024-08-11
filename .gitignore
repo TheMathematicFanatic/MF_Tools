@@ -1,0 +1,17 @@
+# Ignore distribution folders
+dist/
+build/
+*.egg-info/
+
+# Ignore virtual environment folder
+venv/
+
+# Ignore manim media folder
+media/
+
+# Ignore demo for now
+demo/
+
+# Ignore pycaches
+**/__pycache__/
+.pytest_cache/
