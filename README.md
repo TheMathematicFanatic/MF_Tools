@@ -1,11 +1,128 @@
-# MF_Tools
+# Welcome!
+MF-Tools is a collection of various utilities that are helpful for creating Manim scenes.
 
-## TransformByGlyphMap
+The most significant among them is TransformByGlyphMap, but there are also several other small tools in the collection, and I expect to continue to grow the collection over time.
 
+
+## Transforms
+
+### TransformByGlyphMap
+This animation class dramatically simplifies the process and syntax of animating complicated transformations of complicated mobjects. It was made to be used with MathTex for things like algebra animations, but it can be used for any VMobject.
+
+Like all Transforms, it receives two mobjects, but its primary parameter after that is its glyph_map. This consists of an arbitrary number of 2-tuples of lists of integers, such as
+
+`([3,4,8,9], [0,1,3])` <br>
+`([0], [5])` <br>
+`([1,2], [2,4])` <br>
+
+Each tuple will send the VGroup of submobjects at the first list of indices in the starting mobject, to the VGroup of submobjects at the second list of indices in the target mobject, with a simple `ReplacementTransform`.
+
+If one of the lists is empty, such as
+
+`([], [1,4])` <br>
+`([8,9,10], [])`
+
+it will instead trigger an introducer (default `FadeIn`) or a remover (default `FadeOut`) to act on that VGroup of submobjects. If you would prefer a different introducer/remover, you can replace the empty list with the animation of your choice, such as
+
+`(Write, [5,6,7,8])`
+
+Each glyph_map entry can receive an optional third element, which is a dictionary of kwargs to be passed to the corresponding animation. For example,
+
+`([3,4,5], [5,6,7], {"path_arc":PI/2})` <br>
+`([7,8,9,10,11], [], {"run_time":0.5})`
+
+As the glyph_map is parsed, all of the indices that are mentioned are recorded. It is expected that the indices that are NOT mentioned will be of the same length. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original mobject is accounted for and transformed into a submobject of the target mobject. If not, the transform will not work, and it will instead trigger the alternate mode of the animation, which will places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects on the level being operated on. This is intended to help the user in correcting their indexing mistake.
+
+If you're still awake, here is a demonstration:
+
+```
+```
+
+TransformByGlyphMap can accept many additional parameters to control its behavior. The following is an exhaustive list of its parameters and what they do:
+
+Here’s the rewritten list with consistent bold tags:
+
+- **mobA -** Starting mobject (required)
+- **mobB -** Target mobject (required)
+- **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
+- **from_copy -** Boolean, defaults to False. If True, then the original mobA will be left alone while a copy of it is transformed into mobB.
+- **mobA_submobject_index -** List of integers. Determines which submobject of A, or wihch submobject of which submobject of A, etc., upon which to act. Defaults to [0], which is perfect for the structure of MathTex mobjects.
+- **mobB_submobject_index -** List of integers, defaults to [0]. Same as mobA_submobject_index, but for the target mobject.
+- **default_introducer -** Animation, defaults to FadeIn. The introducer to use when the first list of indices in a glyph_map entry is empty.
+- **default_remover -** Animation, defaults to FadeOut. The remover to use when the second list of indices in a glyph_map entry is empty.
+- **introduce_individually -** Boolean, defaults to False. If True, then introducers will be applied individually to each submobject mentioned by a glyph_map entry, rather than to them all as a VGroup. Makes no difference for FadeIn, but can be nice for Write or GrowFromPoint.
+- **remove_individually -** Boolean, defaults to False. Same as introduce_individually, but for the removal animations.
+- **shift_fades -** Boolean, defaults to True. If True, then the introducers and removers will receive a shift parameter in the general direction of motion between the two mobjects being operated on. Really only noticeable if the two mobjects are in substantially different positions, it can be jarring for most glyphs to travel far but the fades stay in place.
+- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the lengths of the indices not mentioned in the glyph_map.
+- **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. Since it is only shown to the programmer and not the final viewer, this is only an aesthetic choice, and I recommend you change it in the source code if you'd prefer to look at different colors.
+- **B_index_labels_color -** Color, defaults to BLUE_D. Same as A_index_labels_color, but for mobB.
+- **index_label_height -** Float, defaults to 0.18. Determines the size of the index_labels. This is just the size I thought was nicest, feel free to change in the source code to your taste.
+- **printing -** Boolean, defaults to False. If True, then each entry of the glyph_map is printed to the console, followed by the lists of all mentioned and unmentioned indices from both mobA and mobB.
+- **\*\*kwargs -** Arbitrary keyword arguments. These are passed to the ReplacementTransforms of the unmentioned indices, and to the final AnimationGroup of everything. Honestly not sure how useful this is, but you could use it for rate_function and run_time.
+
+<br> <br>
+
+Here are a few more examples of how you can use TransformByGlyphMap:
 
 
 ## Common Updaters
 
+### Scene.keep_orientation()
+Within a Scene one can perform
+
+`self.keep_orientation(mob1, mob2, ...)`
+
+This creates a scene updater which will maintain the orientation of all the passed mobjects, even if the higher mobject they may be a part of is rotated.
+It achieves this by giving each mobject an invisible line as a submobject, and uses this line to measure and reset the mobject's angle.
+Do not use this if the presence of this new submobject would disturb other code.
+
+In this example, `side_length` is added as a submobject to `square`, so normally it would rotate with it.
+Indeed, its position is rotated with the square, but because of `self.keep_orientation`, it remains upright.
+```py
+def construct(self):
+    square = Square()
+    side_length = MathTex("1.8").next_to(square, RIGHT)
+    square.add(side_length)
+    self.add(square)
+    self.keep_orientation(side_length)
+    self.play(Write(side_length))
+    self.play(Rotate(square, 3*PI/2, about_point=ORIGIN))
+    self.wait()
+```
 
 
 ## Miscellaneous
+
+### Vcis(angle)
+This simple function returns the unit vector pointing in the direction of the given angle, measured counterclockwise from the positive x-axis. If `clockwise=True` is passed, instead the angle is measured clockwise from the positive y-axis.
+
+Its name means the vector version of the cis function, or the cos + i*sin function.
+
+```py
+def construct(self):
+    Clock = VGroup(*[
+        MathTex(f"{n if n != 0 else 12}").scale(1.5).move_to(3*Vcis(n*30*DEGREES, clockwise=True))
+        for n in range(12)
+    ])
+    self.add(Clock)
+```
+
+
+### VT
+Shorthand subclass of Manim's ValueTracker, invented by @Abulafia.
+It has the following shorthands compared to its superclass:
+
+`val = ValueTracker(5)` --> `val = VT(5)` <br>
+`val.get_value()` --> `~val` <br>
+`val.set_value(3)` --> `val @= 3` <br>
+`self.play(val.animate.set_value(9))` --> `self.play(val @ 9)`
+
+Use to your taste.
+
+
+### bounding_box(mobject)
+This function returns a VGroup of Dots and Lines which represent the critical points and bounding box of a mobject. Helpful as a debugging or explanatory tool for stuff that depends on alignment with critical points.
+
+The optional `always` parameter can be set to True in order for it to receive an updater which will always keep it accurate to the current state of its mobject.
+
+The optional `include_center` parameter can be set to True if you'd like a dot for the center of the bounding box.
