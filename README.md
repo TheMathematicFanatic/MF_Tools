@@ -40,8 +40,6 @@ If you're still awake, here is a demonstration:
 
 TransformByGlyphMap can accept many additional parameters to control its behavior. The following is an exhaustive list of its parameters and what they do:
 
-Here’s the rewritten list with consistent bold tags:
-
 - **mobA -** Starting mobject (required)
 - **mobB -** Target mobject (required)
 - **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
