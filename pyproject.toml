@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "MF-tools"
 version = "1.0.0"
-description = "Manim plugin which simplifies the process of animating algebra"
+description = "Collection of helpful utilities for Manim"
 authors = ["John Connell <johnconnelltutor@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/TheMathematicFanatic/MF_Tools"
