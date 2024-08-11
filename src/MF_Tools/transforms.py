@@ -66,7 +66,7 @@ class TransformByGlyphMap(AnimationGroup):
                 mentioned_from_indices += entry[0]
             elif len(entry[0]) > 0 and len(entry[1]) > 0:
                 animations.append(ReplacementTransform(
-                    VG(A,entry[0]),
+                    VGroup(*[A[i].copy() if i in mentioned_from_indices else A[i] for i in entry[0]]),
                     VG(B,entry[1]),
                     **entry_kwargs
                     ))
