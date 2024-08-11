@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "MF-tools"
+name = "MF-Tools"
 version = "1.0.0"
 description = "Collection of helpful utilities for Manim"
 authors = ["John Connell <johnconnelltutor@gmail.com>"]
