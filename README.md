@@ -11,15 +11,15 @@ This animation class dramatically simplifies the process and syntax of animating
 
 Like all Transforms, it receives two mobjects, but its primary parameter after that is its glyph_map. This consists of an arbitrary number of 2-tuples of lists of integers, such as
 
-`([3,4,8,9], [0,1,3])` <br>
-`([0], [5])` <br>
+`([3,4,8,9], [0,1,3]),` <br>
+`([0], [5]),` <br>
 `([1,2], [2,4])` <br>
 
 Each tuple will send the VGroup of submobjects at the first list of indices in the starting mobject, to the VGroup of submobjects at the second list of indices in the target mobject, with a simple `ReplacementTransform`.
 
 If one of the lists is empty, such as
 
-`([], [1,4])` <br>
+`([], [1,4]),` <br>
 `([8,9,10], [])`
 
 it will instead trigger an introducer (default `FadeIn`) or a remover (default `FadeOut`) to act on that VGroup of submobjects. If you would prefer a different introducer/remover, you can replace the empty list with the animation of your choice, such as
@@ -28,10 +28,10 @@ it will instead trigger an introducer (default `FadeIn`) or a remover (default `
 
 Each glyph_map entry can receive an optional third element, which is a dictionary of kwargs to be passed to the corresponding animation. For example,
 
-`([3,4,5], [5,6,7], {"path_arc":PI/2})` <br>
+`([3,4,5], [5,6,7], {"path_arc":PI/2}),` <br>
 `([7,8,9,10,11], [], {"run_time":0.5})`
 
-As the glyph_map is parsed, all of the indices that are mentioned are recorded. It is expected that the indices that are NOT mentioned will be of the same length. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original mobject is accounted for and transformed into a submobject of the target mobject. If not, the transform will not work, and it will instead trigger the alternate mode of the animation, which will places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects on the level being operated on. This is intended to help the user in correcting their indexing mistake.
+As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. It is expected that the indices that are NOT mentioned will be equally numerous between the two. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If not, the transform will not work, and it will instead trigger the alternate mode of the animation, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This is intended to help the user in correcting their indexing mistake.
 
 If you're still awake, here is a demonstration:
 
@@ -46,15 +46,15 @@ Here’s the rewritten list with consistent bold tags:
 - **mobB -** Target mobject (required)
 - **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
 - **from_copy -** Boolean, defaults to False. If True, then the original mobA will be left alone while a copy of it is transformed into mobB.
-- **mobA_submobject_index -** List of integers. Determines which submobject of A, or wihch submobject of which submobject of A, etc., upon which to act. Defaults to [0], which is perfect for the structure of MathTex mobjects.
+- **mobA_submobject_index -** List of integers. Determines which submobject of A, or which submobject of which submobject of A, etc., upon which to act. Defaults to [0], which is perfect for the structure of MathTex mobjects.
 - **mobB_submobject_index -** List of integers, defaults to [0]. Same as mobA_submobject_index, but for the target mobject.
 - **default_introducer -** Animation, defaults to FadeIn. The introducer to use when the first list of indices in a glyph_map entry is empty.
 - **default_remover -** Animation, defaults to FadeOut. The remover to use when the second list of indices in a glyph_map entry is empty.
-- **introduce_individually -** Boolean, defaults to False. If True, then introducers will be applied individually to each submobject mentioned by a glyph_map entry, rather than to them all as a VGroup. Makes no difference for FadeIn, but can be nice for Write or GrowFromPoint.
+- **introduce_individually -** Boolean, defaults to False. If True, then introducers will be applied individually to each submobject mentioned by a glyph_map entry, rather than to them all as a VGroup. Makes no difference for FadeIn, but can be nicer for Write or GrowFromPoint.
 - **remove_individually -** Boolean, defaults to False. Same as introduce_individually, but for the removal animations.
 - **shift_fades -** Boolean, defaults to True. If True, then the introducers and removers will receive a shift parameter in the general direction of motion between the two mobjects being operated on. Really only noticeable if the two mobjects are in substantially different positions, it can be jarring for most glyphs to travel far but the fades stay in place.
-- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the lengths of the indices not mentioned in the glyph_map.
-- **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. Since it is only shown to the programmer and not the final viewer, this is only an aesthetic choice, and I recommend you change it in the source code if you'd prefer to look at different colors.
+- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the number of indices not mentioned in the glyph_map.
+- **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. Since the show_indices mode is only intended to be shown to the programmer and not the final viewer, and I encourage you change it in the source code to your taste.
 - **B_index_labels_color -** Color, defaults to BLUE_D. Same as A_index_labels_color, but for mobB.
 - **index_label_height -** Float, defaults to 0.18. Determines the size of the index_labels. This is just the size I thought was nicest, feel free to change in the source code to your taste.
 - **printing -** Boolean, defaults to False. If True, then each entry of the glyph_map is printed to the console, followed by the lists of all mentioned and unmentioned indices from both mobA and mobB.
@@ -86,7 +86,7 @@ def construct(self):
     self.add(square)
     self.keep_orientation(side_length)
     self.play(Write(side_length))
-    self.play(Rotate(square, 3*PI/2, about_point=ORIGIN))
+    self.play(Rotate(square, 3*PI/2, about_point=ORIGIN, run_time=2))
     self.wait()
 ```
 
@@ -101,7 +101,7 @@ Its name means the vector version of the cis function, or the cos + i*sin functi
 ```py
 def construct(self):
     Clock = VGroup(*[
-        MathTex(f"{n if n != 0 else 12}").scale(1.5).move_to(3*Vcis(n*30*DEGREES, clockwise=True))
+        MathTex(f"{n if n != 0 else 12}").scale(1.5).move_to(3*Vcis(n*PI/6, clockwise=True))
         for n in range(12)
     ])
     self.add(Clock)
