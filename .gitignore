@@ -9,8 +9,10 @@ venv/
 # Ignore manim media folder
 media/
 
-# Ignore demo for now
-demo/
+# Ignore tests for now
+tests/
+
+
 
 # Ignore pycaches
 **/__pycache__/
