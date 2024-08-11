@@ -18,7 +18,7 @@ class VT(ValueTracker):
         self.set_value(v)
 
 
-def bounding_box(mobject, always=False):
+def bounding_box(mobject, always=False, include_center=False):
     if always:
         return always_redraw(lambda: bounding_box(mobject))
     size = min(mobject.get_width(), mobject.get_height())
@@ -27,6 +27,8 @@ def bounding_box(mobject, always=False):
         *[Dot(mobject.get_critical_point(v), radius=dot_size, color=GREEN_D) for v in [UL, UR, DR, DL]],
         *[Dot(mobject.get_critical_point(v), radius=dot_size, color=RED_B) for v in [LEFT, RIGHT, UP, DOWN]]
     )
+    if include_center:
+        critical_dots += Dot(mobject.get_critical_point(ORIGIN), radius=dot_size, color=BLUE_D)
     edges = VGroup(*[
         Line(critical_dots[i].get_center(), critical_dots[(i+1)%4].get_center(),
             buff=0, stroke_width=2, stroke_opacity=0.5
