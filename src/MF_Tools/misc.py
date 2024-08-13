@@ -37,4 +37,20 @@ def bounding_box(mobject, always=False, include_center=False):
     ])
     return VGroup(edges, critical_dots)
 
-    
+
+def indexx_labels(
+    mobject,
+    colors = [RED_D, ORANGE, YELLOW, GREEN_D, BLUE_D, PURPLE],
+    label_height=None,
+    **kwargs
+    ):
+    if label_height is None:
+        label_height = max(mobject.get_height()/8, 0.18)
+    return VGroup(*[
+        index_labels(mobject[i],
+            color=colors[i%len(colors)],
+            label_height=label_height,
+            **kwargs
+            )
+        for i in range(len(mobject))
+    ])

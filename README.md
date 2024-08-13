@@ -66,6 +66,8 @@ Here are a few more examples of how you can use TransformByGlyphMap:
 ## Common Updaters
 
 ### Scene.keep_orientation()
+***WARNING: Currently bugged/incomplete, as can be seen in the demo below***
+
 Within a Scene one can perform
 
 `self.keep_orientation(mob1, mob2, ...)`
@@ -76,6 +78,7 @@ Do not use this if the presence of this new submobject would disturb other code.
 
 In this example, `side_length` is added as a submobject to `square`, so normally it would rotate with it.
 Indeed, its position is rotated with the square, but because of `self.keep_orientation`, it remains upright.
+
 ```py
 def construct(self):
     square = Square()
@@ -87,6 +90,40 @@ def construct(self):
     self.play(Rotate(square, 3*PI/2, about_point=ORIGIN, run_time=2))
     self.wait()
 ```
+![](/demo/resources/Demo_keep_orientation.gif)
+
+<!--
+<div style="display: flex; flex-wrap: wrap;">
+  <div style="width: 50%; box-sizing: border-box; padding: 10px;">
+    <pre><code class="language-python">
+class Demo_keep_orientation(Scene):
+    def construct(self):
+        square = Square()
+        side_length = MathTex("1.8").next_to(square, RIGHT)
+        square.add(side_length)
+        self.add(square)
+        self.keep_orientation(side_length)
+        self.play(Write(side_length))
+        self.play(Rotate(square, 3*PI/2, about_point=ORIGIN, run_time=2))
+        self.wait()
+    </code></pre>
+  </div>
+  <div style="width: 50%; box-sizing: border-box; padding: 10px;">
+    <img src="demo/resources/Demo_keep_orientation.gif" alt="Demo Image" style="width: 100%;"/>
+  </div>
+</div>
+
+<style>
+@media (max-width: 600px) {
+  div[style*="display: flex"] {
+    flex-direction: column;
+  }
+  div[style*="width: 50%"] {
+    width: 100%;
+  }
+}
+</style>
+-->
 
 
 ## Miscellaneous
@@ -97,16 +134,21 @@ This simple function returns the unit vector pointing in the direction of the gi
 Its name means the vector version of the cis function, or the cos + i*sin function.
 
 ```py
-def construct(self):
-    Clock = VGroup(*[
-        MathTex(f"{n if n != 0 else 12}").scale(1.5).move_to(3*Vcis(n*PI/6, clockwise=True))
-        for n in range(12)
-    ])
-    self.add(Clock)
+class Demo_Vcis(Scene):
+    def construct(self):
+        Clock = VGroup(*[
+            MathTex(f"{n if n != 0 else 12}").scale(1.5).move_to(3*Vcis(n*PI/6, clockwise=True))
+            for n in range(12)
+        ])
+        hour_hand = Arrow(ORIGIN, 1.5*Vcis(145*DEGREES), buff=0)
+        minute_hand = Arrow(ORIGIN, 2.5*Vcis(30*DEGREES), buff=0)
+        border = Circle(radius=3.6, color=WHITE)
+        self.add(Clock, hour_hand, minute_hand, border)
 ```
+![](/demo/resources/Demo_Vcis.png)
 
 
-### VT
+### VT(number)
 Shorthand subclass of Manim's ValueTracker, invented by @Abulafia.
 It has the following shorthands compared to its superclass:
 
@@ -115,7 +157,7 @@ It has the following shorthands compared to its superclass:
 `val.set_value(3)` --> `val @= 3` <br>
 `self.play(val.animate.set_value(9))` --> `self.play(val @ 9)`
 
-Use to your taste.
+The original syntax still works fine with it as well. Use to your taste.
 
 
 ### bounding_box(mobject)
@@ -124,3 +166,21 @@ This function returns a VGroup of Dots and Lines which represent the critical po
 The optional `always` parameter can be set to True in order for it to receive an updater which will always keep it accurate to the current state of its mobject.
 
 The optional `include_center` parameter can be set to True if you'd like a dot for the center of the bounding box.
+
+
+### indexx_labels(mobject)
+This is an upgrade to Manim's `index_labels`.
+
+It uses multiple colors to show the indices of two layers of submobjects instead of just one, very useful for multi-string Tex mobjects. By default it cycles through the six standard rainbow colors, but you can pass your own list of colors as the `colors` parameter.
+
+The height of the labels changes proportionally to the height of the mobject. If you'd prefer a certain size, you can pass it as the `label_height` parameter.
+
+```py
+class Demo_indexx_labels(Scene):
+    def construct(self):
+        M1 = MathTex("a^2+b^2=c^2")
+        M2 = MathTex("\\sin \\left(", "{a^2+b^2}", "\\over", "{3n+1}", "\\right)")
+        self.add(VGroup(M1, M2.scale(2)).arrange(DOWN, buff=1))
+        self.add(indexx_labels(M1), indexx_labels(M2))
+```
+![](demo/resources/Demo_indexx_labels.png)
