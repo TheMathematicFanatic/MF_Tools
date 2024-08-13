@@ -159,6 +159,20 @@ It has the following shorthands compared to its superclass:
 
 The original syntax still works fine with it as well. Use to your taste.
 
+```py
+class Demo_VT(Scene):
+    def construct(self):
+        r = VT(1)
+        circ = always_redraw(lambda: Circle(~r))
+        r @= 2
+        self.add(circ)
+        self.play(r@3)
+        self.wait()
+        self.play(r@1)
+        self.wait()
+```
+![](/demo/resources/Demo_VT.gif)
+
 
 ### bounding_box(mobject)
 This function returns a VGroup of Dots and Lines which represent the critical points and bounding box of a mobject. Helpful as a debugging or explanatory tool for stuff that depends on alignment with critical points.

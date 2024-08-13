@@ -27,7 +27,14 @@ class Demo_Vcis(Scene):
 
 class Demo_VT(Scene):
     def construct(self):
-        pass
+        r = VT(1)
+        circ = always_redraw(lambda: Circle(~r))
+        r @= 2
+        self.add(circ)
+        self.play(r@3)
+        self.wait()
+        self.play(r@1)
+        self.wait()
         
 
 

@@ -16,6 +16,7 @@ class VT(ValueTracker):
         return self.animate.set_value(v)
     def __imatmul__(self, v):
         self.set_value(v)
+        return self
 
 
 def bounding_box(mobject, always=False, include_center=False):
