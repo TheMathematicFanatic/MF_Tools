@@ -11,6 +11,9 @@ def keep_orientation(scene, *mobjects):
     scene.add_updater(keep_orientation_updater)
 Scene.keep_orientation = keep_orientation
 
+"""
+Idk about these, should rethink...
+Possibly should go in geometry also
 
 def always_label_tippable(tippable, distance=0.5):
     def updater(mob, dt):
@@ -44,3 +47,4 @@ def always_label_vertex(polygram, vertex_number, distance=0.5):
         vertex_direction /= np.linalg.norm(vertex_direction)
         mob.move_to(vertices[vertex_number] + vertex_direction*distance)
     return updater
+"""

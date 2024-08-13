@@ -126,6 +126,32 @@ class Demo_keep_orientation(Scene):
 -->
 
 
+## Geometry
+
+### Arc3d
+Simple 3D arc for any orientation, invented by @uwezi. Receives three points or mobjects as the start, end, and center.
+
+```py
+class Demo_Arc3d(ThreeDScene):
+    def construct(self):
+        cs = ThreeDAxes()
+        self.add(cs)
+        C = Dot3D([1,3,1])
+        self.add(C)
+        self.move_camera(phi=75 * DEGREES, theta=25 * DEGREES)
+        self.begin_ambient_camera_rotation(rate=0.2)
+        A = Dot3D([2,0,3]).set_color(RED)
+        B = Dot3D([-2,-2,-2]).set_color(BLUE)
+        CA = Line(C.get_center(), A.get_center())
+        CB = Line(C.get_center(), B.get_center())      
+        self.add(A,B)
+        self.play(Create(CA), Create(CB))
+        self.play(Create(Arc3d(A=A.get_center(), B=B.get_center(), center=C.get_center(), radius=1.5, segments=30)))
+        self.wait(6)
+```
+![](/demo/resources/Demo_Arc3d.gif)
+
+
 ## Miscellaneous
 
 ### Vcis(angle)

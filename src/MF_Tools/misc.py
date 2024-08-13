@@ -1,5 +1,4 @@
 from manim import *
-from .updaters import keep_orientation
 
 
 def Vcis(theta, clockwise=False):
@@ -9,7 +8,7 @@ def Vcis(theta, clockwise=False):
         return np.cos(theta)*RIGHT + np.sin(theta)*UP
 
 
-class VT(ValueTracker):
+class VT(ValueTracker): #Credit to @Abulafia on Manim Discord
     def __invert__(self):
         return self.get_value()
     def __matmul__(self, v):
@@ -55,3 +54,4 @@ def indexx_labels(
             )
         for i in range(len(mobject))
     ])
+
