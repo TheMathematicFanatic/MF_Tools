@@ -134,7 +134,7 @@ Simple 3D arc for any orientation, invented by @uwezi. Receives three points or 
 ```py
 class Demo_Arc3d(ThreeDScene):
     def construct(self):
-        cs = ThreeDAxes()
+        cs = ThreeDAxes().set_color(GRAY)
         self.add(cs)
         C = Dot3D([1,3,1])
         self.add(C)
