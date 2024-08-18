@@ -15,6 +15,7 @@ class TransformByGlyphMap(AnimationGroup):
         remove_individually=False,
         shift_fades=True,
         show_indices=False,
+        allow_mismatch=False,
         A_index_labels_color=RED_D,
         B_index_labels_color=ORANGE,
         index_label_height=0.18,
@@ -82,7 +83,7 @@ class TransformByGlyphMap(AnimationGroup):
         remaining_from_indices = [i for i in range(len(A)) if i not in mentioned_from_indices]
         remaining_to_indices = [i for i in range(len(B)) if i not in mentioned_to_indices]
         
-        if not len(remaining_from_indices) == len(remaining_to_indices):
+        if not len(remaining_from_indices) == len(remaining_to_indices) and not allow_mismatch:
             print("Error: lengths of unmentioned indices do not match.")
             print(f"Remaining from indices (length {len(remaining_from_indices)}): ", remaining_from_indices)
             print(f"Remaining to indices (length {len(remaining_to_indices)}): ", remaining_to_indices)
@@ -100,10 +101,10 @@ class TransformByGlyphMap(AnimationGroup):
                 Wait(5),
                 lag_ratio=0.5
             )
-        else:
+        elif not allow_mismatch:
             for i,j in zip(remaining_from_indices, remaining_to_indices):
                 animations.append(ReplacementTransform(A[i], B[j], **kwargs))
-            super().__init__(*animations, **kwargs)
+        super().__init__(*animations, **kwargs)
 
 
 def ir(a,b): #inclusive_range
