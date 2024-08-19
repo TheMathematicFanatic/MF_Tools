@@ -1,3 +1,4 @@
+import decimal
 from manim import *
 
 
@@ -16,42 +17,52 @@ class VT(ValueTracker): #Credit to @Abulafia on Manim Discord
     def __imatmul__(self, v):
         self.set_value(v)
         return self
+    def __add__(self, diff):
+        return self.animate.increment_value(diff)
+    def __iadd__(self, diff):
+        self.increment_value(diff)
+        return self
+    def __sub__(self, diff):
+        return self.animate.increment_value(-diff)
+    def __isub__(self, diff):
+        self.increment_value(-diff)
+        return self
+
+def DN(value_source, *args, **kwargs):
+    if isinstance(value_source, ValueTracker):
+        get_source_value = value_source.get_value
+    elif callable(value_source):
+        get_source_value = value_source
+    else:
+        raise ValueError("Invalid type for value_source. Must be ValueTracker or callable")
+    result = DecimalNumber(get_source_value(), *args, **kwargs)
+    result.add_updater(lambda D: D.set_value(get_source_value()))
+    return result
 
 
-class DN(DecimalNumber):
-    def __init__(self, value_source, *args, **kwargs):
-        if isinstance(value_source, ValueTracker):
-            self.get_source_value = value_source.get_value
-        elif callable(value_source):
-            self.get_source_value = value_source
-        else:
-            raise ValueError("Invalid type for value_source. Must be ValueTracker or callable")
-        super().__init__(self.get_source_value(), *args, **kwargs)
-        self.add_updater(lambda D: D.set_value(self.get_source_value()))
-
-
-class CoordPair(VGroup):
-    def __init__(tracked_mobject, next_to_dir=None, buff=0.25, axes=None, **kwargs):
-        if axes is None:
-            self.x_coord = DN(tracked_mobject.get_x, **kwargs)
-            self.y_coord = DN(tracked_mobject.get_y, **kwargs)
-        else:
-            self.x_coord = DN(lambda: axes.c2p(tracked_mobject.get_x(), 0), **kwargs)
-            self.y_coord = DN(lambda: axes.c2p(0, tracked_mobject.get_y()), **kwargs)
-        super().__init__(
-            MathTex("("),
-            self.x_coord,
-            MathTex(","),
-            self.y_coord,
-            MathTex(")"),
-            **kwargs
-        )
-        def arrange_udpater(vg):
-            vg.arrange(RIGHT)
-            vg[2].shift(0*DOWN)
-        self.add_updater(arrange_udpater)
-        if next_to_dir is not None:
-            self.add_updater(lambda C: C.next_to(tracked_mobject, next_to_dir, buff=buff))
+def CoordPair(tracked_mobject, next_to_dir=None, buff=0.25, axes=None, **kwargs):
+    if axes:
+        x_coord = DN(lambda: axes.c2p(tracked_mobject.get_x(), 0)[0], **kwargs)
+        y_coord = DN(lambda: axes.c2p(0, tracked_mobject.get_y())[1], **kwargs)
+    else:
+        x_coord = DN(tracked_mobject.get_x, **kwargs)
+        y_coord = DN(tracked_mobject.get_y, **kwargs)
+    result = VGroup(
+        MathTex("("),
+        x_coord,
+        MathTex(","),
+        y_coord,
+        MathTex(")"),
+        **kwargs
+    )
+    def arrange_udpater(vg):
+        vg.arrange(RIGHT, buff=0)
+        vg[2].shift(0*DOWN)
+    result.add_updater(arrange_udpater)
+    if next_to_dir is not None:
+        result.add_updater(lambda C: C.next_to(tracked_mobject, next_to_dir, buff=buff))
+    result.update()
+    return result
 
 
 def bounding_box(mobject, always=False, include_center=False):

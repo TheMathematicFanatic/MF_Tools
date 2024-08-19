@@ -202,7 +202,7 @@ class Demo_VT(Scene):
 
 
 ### DN(callable)
-Shorthand subclass of Manim's DecimalNumber.
+Shorthand for Manim's DecimalNumber with automatic updaters.
 Receives a ValueTracker or callable as its first argument, followed by any other arguments accepted by Manim's DecimalNumber class.
 Automatically receives an updater which will keep it accurate to the current state of its ValueTracker or callable.
 ```py
