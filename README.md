@@ -184,7 +184,7 @@ It has the following shorthands compared to its superclass:
 `val.set_value(3)` --> `val @= 3` <br>
 `self.play(val.animate.set_value(9))` --> `self.play(val @ 9)`
 
-The original syntax still works fine with it as well. Use to your taste.
+The original syntax still works fine with it as well.
 
 ```py
 class Demo_VT(Scene):
@@ -201,12 +201,49 @@ class Demo_VT(Scene):
 ![](/demo/resources/Demo_VT.gif)
 
 
+### DN(callable)
+Shorthand subclass of Manim's DecimalNumber.
+Receives a ValueTracker or callable as its first argument, followed by any other arguments accepted by Manim's DecimalNumber class.
+Automatically receives an updater which will keep it accurate to the current state of its ValueTracker or callable.
+```py
+class Demo_DN(Scene):
+    def construct(self):
+        r = VT(1)
+        circ = always_redraw(lambda: Circle(~r))
+        r_dec = DN(r)
+        d_dec = DN(lambda: circ.width)
+        A_dec = DN(lambda: PI*(~r)**2)
+        Nums = VGroup(r_dec, d_dec, A_dec).arrange(down)
+        self.add(circ, Nums)
+        self.wait()
+        self.play(r@3)
+        self.wait()
+```
+![](/demo/resources/Demo_VT.gif)
+
 ### bounding_box(mobject)
 This function returns a VGroup of Dots and Lines which represent the critical points and bounding box of a mobject. Helpful as a debugging or explanatory tool for stuff that depends on alignment with critical points.
 
 The optional `always` parameter can be set to True in order for it to receive an updater which will always keep it accurate to the current state of its mobject.
 
 The optional `include_center` parameter can be set to True if you'd like a dot for the center of the bounding box.
+```py
+class Demo_bounding_box(Scene):
+    def construct(self):
+        L = Line(2*DL, 3*RIGHT+UP)
+        l = Text("l")
+        T = MathTex("a^2 + b^2")
+        Tr = T.copy().rotate(PI/4)
+        VG = VGroup(L, l, T, Tr).arrange(RIGHT, buff=1)
+        self.add(VG)
+        for mob in VG:
+            self.add(bounding_box(mob, always=True))
+        self.wait()
+        self.play(*[
+            Rotate(mob, TAU, run_time=10) for mob in VG
+        ])
+```
+![](/demo/resources/Demo_bounding_box.gif)
 
 
 ### indexx_labels(mobject)

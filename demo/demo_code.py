@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 from manim import *
 from MF_Tools import *
 
@@ -27,14 +30,38 @@ class Demo_Vcis(Scene):
 
 class Demo_VT(Scene):
     def construct(self):
-        r = VT(1)
+        r = VT(2)
+        r @= 1
         circ = always_redraw(lambda: Circle(~r))
-        r @= 2
         self.add(circ)
+        self.wait()
         self.play(r@3)
         self.wait()
-        self.play(r@1)
+
+
+class Demo_DN(Scene):
+    def construct(self):
+        r = VT(1)
+        circ = always_redraw(lambda: Circle(~r))
+        r_dec = DN(r)
+        d_dec = DN(lambda: circ.width)
+        A_dec = DN(lambda: PI*(~r)**2, num_decimal_places=3)
+        Nums = VGroup(r_dec, d_dec, A_dec).arrange(DOWN)
+        self.add(circ, Nums)
         self.wait()
+        self.play(r@3)
+        self.wait()
+
+
+class Demo_CoordPair(Scene):
+    def construct(self):
+        dot = Dot([-2,3,0])
+        coord = CoordPair(dot)
+        dumb_coord = MathTex("(-2,3)")
+        VGroup(coord, dumb_coord).arrange(RIGHT).to_edge(DOWN)
+        self.add(dot, coord, dumb_coord)
+
+
         
 
 
@@ -46,3 +73,17 @@ class Demo_indexx_labels(Scene):
         self.add(indexx_labels(M1), indexx_labels(M2))
 
 
+class Demo_bounding_box(Scene):
+    def construct(self):
+        L = Line(2*DL, 3*RIGHT+UP)
+        l = Text("l")
+        T = MathTex("a^2 + b^2")
+        Tr = T.copy().rotate(PI/4)
+        VG = VGroup(L, l, T, Tr).arrange(RIGHT, buff=1)
+        self.add(VG)
+        for mob in VG:
+            self.add(bounding_box(mob, always=True))
+        self.wait()
+        self.play(*[
+            Rotate(mob, TAU, run_time=10) for mob in VG
+        ])

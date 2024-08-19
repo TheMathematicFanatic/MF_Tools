@@ -18,9 +18,45 @@ class VT(ValueTracker): #Credit to @Abulafia on Manim Discord
         return self
 
 
+class DN(DecimalNumber):
+    def __init__(self, value_source, *args, **kwargs):
+        if isinstance(value_source, ValueTracker):
+            self.get_source_value = value_source.get_value
+        elif callable(value_source):
+            self.get_source_value = value_source
+        else:
+            raise ValueError("Invalid type for value_source. Must be ValueTracker or callable")
+        super().__init__(self.get_source_value(), *args, **kwargs)
+        self.add_updater(lambda D: D.set_value(self.get_source_value()))
+
+
+class CoordPair(VGroup):
+    def __init__(tracked_mobject, next_to_dir=None, buff=0.25, axes=None, **kwargs):
+        if axes is None:
+            self.x_coord = DN(tracked_mobject.get_x, **kwargs)
+            self.y_coord = DN(tracked_mobject.get_y, **kwargs)
+        else:
+            self.x_coord = DN(lambda: axes.c2p(tracked_mobject.get_x(), 0), **kwargs)
+            self.y_coord = DN(lambda: axes.c2p(0, tracked_mobject.get_y()), **kwargs)
+        super().__init__(
+            MathTex("("),
+            self.x_coord,
+            MathTex(","),
+            self.y_coord,
+            MathTex(")"),
+            **kwargs
+        )
+        def arrange_udpater(vg):
+            vg.arrange(RIGHT)
+            vg[2].shift(0*DOWN)
+        self.add_updater(arrange_udpater)
+        if next_to_dir is not None:
+            self.add_updater(lambda C: C.next_to(tracked_mobject, next_to_dir, buff=buff))
+
+
 def bounding_box(mobject, always=False, include_center=False):
     if always:
-        return always_redraw(lambda: bounding_box(mobject))
+        return always_redraw(lambda: bounding_box(mobject, always=False, include_center=include_center))
     size = min(mobject.get_width(), mobject.get_height())
     dot_size = np.clip(size/12, 0.02, 0.06)
     critical_dots = VGroup(
@@ -57,7 +93,7 @@ def indexx_labels(
 
 
 class SurroundingRectangleUnion(VGroup):
-    def __init__(self, *mobjects, buff=0.1, corner_radius=0.0, stroke_color=YELLOW, **kwargs):
+    def __init__(self, *mobjects, buff=0.1, unbuff=0.05, corner_radius=0.0, stroke_color=YELLOW, **kwargs):
         polygons = []
         rectagles = VGroup(*[SurroundingRectangle(m, buff=buff) for m in mobjects])
         union = Union(*rectagles, **kwargs)
@@ -74,7 +110,14 @@ class SurroundingRectangleUnion(VGroup):
                 current_polygon.append(bez[0])
         
         for poly in polygons:
-            pass # figure out orientation and then shift all the corners inward by the same amount (buff/2?)
+            for i,v in enumerate(poly):
+                VA = normalize(v - poly[(i-1)%len(poly)])
+                VB = normalize(v - poly[(i+1)%len(poly)])
+                bisector = normalize(VB - VA)
+                if np.cross(VA[:2], VB[:2]) > 0:
+                    poly[i] += unbuff*bisector
+                else:
+                    poly[i] -= unbuff*bisector
 
         super().__init__(
             *[Polygon(*poly) for poly in polygons],
