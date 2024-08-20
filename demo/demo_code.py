@@ -145,10 +145,20 @@ class Demo_SurroundingRectangleUnion2(Scene):
         self.add(index_labels(V))
 
 
+class Demo_TransformByGlyphMap0(Scene):
+    def construct(self):
+        exp1 = MathTex("f(x) = 4x^2 + 5x + 6").scale(2)
+        exp2 = MathTex("f(-3) = 4(-3)^2 + 5(-3) + 6").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2))
+        self.wait()
+
+
 class Demo_TransformByGlyphMap1(Scene):
     def construct(self):
-        exp1 = MathTex("f(x) = 4x^2 + 5x + 6")
-        exp2 = MathTex("f(-3) = 4(-3)^2 + 5(-3) + 6")
+        exp1 = MathTex("f(x) = 4x^2 + 5x + 6").scale(2)
+        exp2 = MathTex("f(-3) = 4(-3)^2 + 5(-3) + 6").scale(2)
         self.add(exp1)
         self.wait()
         self.play(TransformByGlyphMap(exp1, exp2,
@@ -161,21 +171,8 @@ class Demo_TransformByGlyphMap1(Scene):
 
 class Demo_TransformByGlyphMap2(Scene):
     def construct(self):
-        exp1 = MathTex("c^2 = a^2 + b^2")
-        exp2 = MathTex("c = \\sqrt{a^2 + b^2}")
-        self.add(exp1)
-        self.wait()
-        self.play(TransformByGlyphMap(exp1, exp2,
-            ([1], [2,3], {"path_arc":-PI/3}),
-            ([2], [1], {"path_arc":-PI/4}),
-        ))
-        self.wait()
-
-
-class Demo_TransformByGlyphMap3(Scene):
-    def construct(self):
-        exp1 = MathTex("ax^2 + bx + c = 0")
-        exp2 = MathTex("x^2 + \\frac{b}{a}x + \\frac{c}{a} = 0")
+        exp1 = MathTex("ax^2 + bx + c = 0").scale(2)
+        exp2 = MathTex("x^2 + \\frac{b}{a}x + \\frac{c}{a} = 0").scale(2)
         self.add(exp1)
         self.wait()
         self.play(TransformByGlyphMap(exp1, exp2,
@@ -187,14 +184,46 @@ class Demo_TransformByGlyphMap3(Scene):
         self.wait()
 
 
-class Demo_TransformByGlyphMap4(Scene):
+class Demo_TransformByGlyphMap3(Scene):
     def construct(self):
-        exp1 = MathTex("\\frac{x^2y^3}{w^4z^{-8}}")
-        exp2 = MathTex("\\frac{x^2y^3z^8}{w^4}")
+        exp1 = MathTex("\\frac{x^2y^3}{w^4z^{-8}}").scale(2)
+        exp2 = MathTex("\\frac{x^2y^3z^8}{w^4}").scale(2)
         self.add(exp1)
         self.wait()
         self.play(TransformByGlyphMap(exp1, exp2,
             ([7,9], [4,5]),
             ([8], [], {"shift":UP}),
+        ))
+        self.wait()
+
+
+class Demo_TransformByGlyphMap4(Scene):
+    def construct(self):
+        exp1 = MathTex("{ { 3x+2y \\over 2x+y } + 12z").scale(1.8)
+        exp2 = MathTex("\\left( { 2x+y \\over 3x+2y } \\right) ^ {-1} + 12z").scale(1.8)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0,1,2,3,4], [6,7,8,9,10], {"path_arc": PI}),
+            ([6,7,8,9], [1,2,3,4], {"path_arc": PI}),
+            ([], [0], {"delay":0.5}),
+            ([], [11], {"delay":0.5}),
+            ([], [12,13], {"delay":0.5}),
+            default_introducer=Write
+        ))
+        self.wait()
+
+
+class Demo_TransformByGlyphMap5(Scene):
+    def construct(self):
+        exp1 = MathTex("1 \\over 3r+\\theta").scale(2)
+        exp2 = MathTex("\\left( 3r+\\theta \\right) ^ {-1}").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([2,3,4,5], [1,2,3,4], {"path_arc": -2/3*PI}),
+            ([0,1], FadeOut, {"run_time": 0.5}),
+            (GrowFromCenter, [0,5,6,7], {"delay":0.25}),
+            introduce_individually=True,
         ))
         self.wait()

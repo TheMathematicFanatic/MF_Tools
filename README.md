@@ -35,9 +35,107 @@ As the glyph_map is parsed, all of the indices that are mentioned are recorded f
 
 
 If you're still awake, here is a demonstration:
+```py
+class Demo_TransformByGlyphMap0(Scene):
+    def construct(self):
+        exp1 = MathTex("f(x) = 4x^2 + 5x + 6").scale(2)
+        exp2 = MathTex("f(-3) = 4(-3)^2 + 5(-3) + 6").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2))
+        self.wait()
+```
+![](/demo/resources/Demo_TransformByGlyphMap0.gif)
 
+By passing no glyph_map (or an empty glyph_map entry, or the parameter `show_indices=True`), it triggers the show_indices mode of the animation. By inspecting the indices, the user can then fill in the glyph_map.
+
+```py
+class Demo_TransformByGlyphMap1(Scene):
+    def construct(self):
+        exp1 = MathTex("f(x) = 4x^2 + 5x + 6").scale(2)
+        exp2 = MathTex("f(-3) = 4(-3)^2 + 5(-3) + 6").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([2], [2,3]),
+            ([6], [7,8,9,10]),
+            ([10], [14,15,16,17])
+        ))
+        self.wait()
 ```
+![](/demo/resources/Demo_TransformByGlyphMap1.gif)
+
+Here are a few more examples!
+```py
+class Demo_TransformByGlyphMap2(Scene):
+    def construct(self):
+        exp1 = MathTex("ax^2 + bx + c = 0").scale(2)
+        exp2 = MathTex("x^2 + \\frac{b}{a}x + \\frac{c}{a} = 0").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0], [5], {"path_arc":2/3*PI}),
+            ([0], [10], {"path_arc":1/2*PI}),
+            ([], [4,9]),
+            run_time=2
+        ))
+        self.wait()
 ```
+![](/demo/resources/Demo_TransformByGlyphMap2.gif)
+
+```py
+class Demo_TransformByGlyphMap3(Scene):
+    def construct(self):
+        exp1 = MathTex("\\frac{x^2y^3}{w^4z^{-8}}").scale(2)
+        exp2 = MathTex("\\frac{x^2y^3z^8}{w^4}").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([7,9], [4,5]),
+            ([8], [], {"shift":UP}),
+        ))
+        self.wait()
+```
+![](/demo/resources/Demo_TransformByGlyphMap3.gif)
+
+```py
+class Demo_TransformByGlyphMap4(Scene):
+    def construct(self):
+        exp1 = MathTex("{ { 3x+2y \\over 2x+y } + 12z").scale(1.8)
+        exp2 = MathTex("\\left( { 2x+y \\over 3x+2y } \\right) ^ {-1} + 12z").scale(1.8)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0,1,2,3,4], [6,7,8,9,10], {"path_arc": PI}),
+            ([6,7,8,9], [1,2,3,4], {"path_arc": PI}),
+            ([], [0], {"delay":0.5}),
+            ([], [11], {"delay":0.5}),
+            ([], [12,13], {"delay":0.5}),
+            default_introducer=Write
+        ))
+        self.wait()
+```
+![](/demo/resources/Demo_TransformByGlyphMap4.gif)
+
+`delay` is a special kwarg that delays the animation corresponding to that entry for the specified amount of time. It does not affect its `run_time`; this can also be passed separately. Sometimes it is nice for the parentheses etc to not appear until after everyone else has moved into place.
+
+```py
+class Demo_TransformByGlyphMap5(Scene):
+    def construct(self):
+        exp1 = MathTex("1 \\over 3r+\\theta").scale(2)
+        exp2 = MathTex("\\left( 3r+\\theta \\right) ^ {-1}").scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([2,3,4,5], [1,2,3,4], {"path_arc": -2/3*PI}),
+            ([0,1], FadeOut, {"run_time": 0.5}),
+            (GrowFromCenter, [0,5,6,7], {"delay":0.25}),
+            introduce_individually=True,
+        ))
+        self.wait()
+```
+![](/demo/resources/Demo_TransformByGlyphMap5.gif)
+
 
 TransformByGlyphMap can accept many additional parameters to control its behavior. The following is an exhaustive list of its parameters and what they do:
 
