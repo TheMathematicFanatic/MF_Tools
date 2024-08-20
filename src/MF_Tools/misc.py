@@ -1,4 +1,4 @@
-import decimal
+from copy import deepcopy
 from manim import *
 
 
@@ -121,10 +121,10 @@ def indexx_labels(
 
 
 class SurroundingRectangleUnion(VGroup):
-    def __init__(self, *mobjects, buff=0.1, unbuff=0.05, corner_radius=0.0, stroke_color=YELLOW, **kwargs):
-        polygons = []
-        rectagles = VGroup(*[SurroundingRectangle(m, buff=buff) for m in mobjects])
-        union = Union(*rectagles, **kwargs)
+    def __init__(self, *mobjects, buff=0.1, unbuff=0.05, corner_radius=0.0, **kwargs):
+        self.polygons = []
+        rectangles = VGroup(*[SurroundingRectangle(m, buff=buff) for m in mobjects])
+        union = Union(*rectangles, **kwargs) if len(rectangles) > 1 else rectangles[0]
         beziers = [union.points[i:i+4] for i in range(0, len(union.points), 4)]
         current_polygon = []
         for bez in beziers:
@@ -132,28 +132,25 @@ class SurroundingRectangleUnion(VGroup):
                 current_polygon.append(bez[0])
             elif all(bez[-1] == current_polygon[0]):
                 current_polygon.append(bez[0])
-                polygons.append(current_polygon)
+                self.polygons.append(current_polygon)
                 current_polygon = []
             else:
                 current_polygon.append(bez[0])
+        if unbuff > 0: self.apply_unbuff(unbuff)
+        super().__init__(*[Polygon(*poly, **kwargs) for poly in self.polygons], **kwargs)
+        if corner_radius > 0: self.round_corners(corner_radius)
         
-        for poly in polygons:
+    def apply_unbuff(self,unbuff):
+        poly_copy = deepcopy(self.polygons)
+        for j,poly in enumerate(poly_copy):
             for i,v in enumerate(poly):
                 VA = normalize(v - poly[(i-1)%len(poly)])
                 VB = normalize(v - poly[(i+1)%len(poly)])
-                bisector = normalize(VB - VA)
+                bisector = VA + VB
                 if np.cross(VA[:2], VB[:2]) > 0:
-                    poly[i] += unbuff*bisector
+                    self.polygons[j][i] += unbuff*bisector
                 else:
-                    poly[i] -= unbuff*bisector
-
-        super().__init__(
-            *[Polygon(*poly) for poly in polygons],
-            stroke_color=stroke_color,
-            **kwargs
-        )
-        if corner_radius > 0:
-            self.round_corners(corner_radius)
+                    self.polygons[j][i] -= unbuff*bisector
         
     def round_corners(self, corner_radius):
         for poly in self:
@@ -162,13 +159,3 @@ class SurroundingRectangleUnion(VGroup):
 
 
 
-        # super().__init__(
-        #     *[union.points[i] for i in range(0, len(union.points), 4)],
-        #     stroke_color=stroke_color,
-        #     )
-        # if corner_radius > 0:
-        #     self.round_corners(corner_radius)
-
-# Needs to be a Polygram to use .round_corners
-# Can't be a Polygram since sometimes it is disconnected
-# Hmm...
