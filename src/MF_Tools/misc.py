@@ -28,6 +28,7 @@ class VT(ValueTracker): #Credit to @Abulafia on Manim Discord
         self.increment_value(-diff)
         return self
 
+
 def DN(value_source, *args, **kwargs):
     if isinstance(value_source, ValueTracker):
         get_source_value = value_source.get_value
@@ -40,13 +41,22 @@ def DN(value_source, *args, **kwargs):
     return result
 
 
-def CoordPair(tracked_mobject, next_to_dir=None, buff=0.25, axes=None, **kwargs):
+def CoordPair(
+    tracked_mobject,
+    decimal_number_kwargs = {},
+    next_to_dir = None,
+    buff = 0.25,
+    size = 1,
+    axes = None,
+    background_rectangle = False,
+    background_rectangle_kwargs = {},
+    **kwargs):
     if axes:
-        x_coord = DN(lambda: axes.c2p(tracked_mobject.get_x(), 0)[0], **kwargs)
-        y_coord = DN(lambda: axes.c2p(0, tracked_mobject.get_y())[1], **kwargs)
+        x_coord = DN(lambda: axes.c2p(tracked_mobject.get_x(), 0)[0], **decimal_number_kwargs)
+        y_coord = DN(lambda: axes.c2p(0, tracked_mobject.get_y())[1], **decimal_number_kwargs)
     else:
-        x_coord = DN(tracked_mobject.get_x, **kwargs)
-        y_coord = DN(tracked_mobject.get_y, **kwargs)
+        x_coord = DN(tracked_mobject.get_x, **decimal_number_kwargs)
+        y_coord = DN(tracked_mobject.get_y, **decimal_number_kwargs)
     result = VGroup(
         MathTex("("),
         x_coord,
@@ -56,13 +66,20 @@ def CoordPair(tracked_mobject, next_to_dir=None, buff=0.25, axes=None, **kwargs)
         **kwargs
     )
     def arrange_udpater(vg):
-        vg.arrange(RIGHT, buff=0)
-        vg[2].shift(0*DOWN)
+        vg.arrange(RIGHT, buff=0.075, center=False)
+        vg[2].shift(0.2*DOWN)
     result.add_updater(arrange_udpater)
+    result.add_updater(lambda C: C.scale_to_fit_height(size))
     if next_to_dir is not None:
         result.add_updater(lambda C: C.next_to(tracked_mobject, next_to_dir, buff=buff))
+        result.x_coord = x_coord
+        result.y_coord = y_coord
     result.update()
-    return result
+    if background_rectangle:
+        result.background_rectangle = always_redraw(lambda: BackgroundRectangle(result, **background_rectangle_kwargs))
+        return VGroup(result.background_rectangle, result)
+    else:
+        return result
 
 
 def bounding_box(mobject, always=False, include_center=False):
@@ -136,8 +153,11 @@ class SurroundingRectangleUnion(VGroup):
             **kwargs
         )
         if corner_radius > 0:
-            for poly in self:
-                poly.round_corners(corner_radius)
+            self.round_corners(corner_radius)
+        
+    def round_corners(self, corner_radius):
+        for poly in self:
+            poly.round_corners(corner_radius)
 
 
 

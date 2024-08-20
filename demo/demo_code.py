@@ -30,12 +30,13 @@ class Demo_Vcis(Scene):
 
 class Demo_VT(Scene):
     def construct(self):
-        r = VT(2)
-        r @= 1
+        r = VT(1)
         circ = always_redraw(lambda: Circle(~r))
+        r @= 2
         self.add(circ)
-        self.wait()
         self.play(r@3)
+        self.wait()
+        self.play(r-1)
         self.wait()
 
 
@@ -56,13 +57,14 @@ class Demo_DN(Scene):
 class Demo_CoordPair(Scene):
     def construct(self):
         dot = Dot([-2,3,0])
-        coord = CoordPair(dot)
+        coord = CoordPair(dot, next_to_dir=DOWN, size=0.5, background_rectangle=True, decimal_number_kwargs={"num_decimal_places": 1})
         dumb_coord = MathTex("(-2,3)")
-        VGroup(coord, dumb_coord).arrange(RIGHT).to_edge(DOWN)
+        dumb_coord.to_edge(DOWN)
+        self.add(NumberPlane())
         self.add(dot, coord, dumb_coord)
-
-
-        
+        self.wait()
+        self.play(dot.animate.move_to([5.5, -3, 0]), run_time=0.5)
+        self.wait()
 
 
 class Demo_indexx_labels(Scene):
@@ -87,3 +89,22 @@ class Demo_bounding_box(Scene):
         self.play(*[
             Rotate(mob, TAU, run_time=10) for mob in VG
         ])
+
+
+class Demo_SurroundingRectangleUnion(Scene):
+    def construct(self):
+        V = VGroup(
+            C := Circle().shift(DL*2),
+            T := Text("Hello"),
+            M := MathTex("a^2+b^2=c^2").shift(2*UP),
+        )
+        self.add(V)
+        self.add(
+            S := SurroundingRectangleUnion(
+                *V,
+                buff=0.1,
+                unbuff=0.05,
+                corner_radius=0.25,
+                stroke_color=GREEN
+            )
+        )

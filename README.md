@@ -31,7 +31,8 @@ Each glyph_map entry can receive an optional third element, which is a dictionar
 `([3,4,5], [5,6,7], {"path_arc":PI/2}),` <br>
 `([7,8,9,10,11], [], {"run_time":0.5})`
 
-As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. It is expected that the indices that are NOT mentioned will be equally numerous between the two. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If not, the transform will not work, and it will instead trigger the alternate mode of the animation, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This is intended to help the user in correcting their indexing mistake.
+As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. It is expected that the indices that are NOT mentioned will be equally numerous between the two. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If not, the transform will not work, and it will instead trigger the alternate mode of the animation, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This mode can also be triggered with `show_indices-True`, or with an empty glyph_map entry `([], [])`. This is intended to help the user in filling out the indices of the glyph_map, or correcting an index mistake.
+
 
 If you're still awake, here is a demonstration:
 
@@ -52,7 +53,6 @@ TransformByGlyphMap can accept many additional parameters to control its behavio
 - **remove_individually -** Boolean, defaults to False. Same as introduce_individually, but for the removal animations.
 - **shift_fades -** Boolean, defaults to True. If True, then the introducers and removers will receive a shift parameter in the general direction of motion between the two mobjects being operated on. Really only noticeable if the two mobjects are in substantially different positions, it can be jarring for most glyphs to travel far but the fades stay in place.
 - **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the number of indices not mentioned in the glyph_map.
-- **allow_mismatch -** Boolean, defaults to False. If true, then only the animations specifically declared in the glyph_map will be performed, and unmentioned indices of both mobjects will be left alone. This way, the user can combine TransformByGlyphMap with other animations, either in sequence or in parallel, for transforming between the two mobjects.
 - **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. The show_indices mode is only intended to be shown to the programmer and not the final viewer; I encourage you change it in the source code to your taste.
 - **B_index_labels_color -** Color, defaults to BLUE_D. Same as A_index_labels_color, but for mobB.
 - **index_label_height -** Float, defaults to 0.18. Determines the size of the index_labels. This is just the size I thought was nicest; change in the source code to your taste.
@@ -182,7 +182,12 @@ It has the following shorthands compared to its superclass:
 `val = ValueTracker(5)` --> `val = VT(5)` <br>
 `val.get_value()` --> `~val` <br>
 `val.set_value(3)` --> `val @= 3` <br>
-`self.play(val.animate.set_value(9))` --> `self.play(val @ 9)`
+`self.play(val.animate.set_value(9))` --> `self.play(val @ 9)` <br>
+`val.increment_value(4)` --> `val += 4` <br>
+`self.play(val.animate.increment_value(4)) ` --> `self.play(val + 4)` <br>
+`val.increment_value(-4)` --> `val -= 4` <br>
+`self.play(val.animate.increment_value(-4)) ` --> `self.play(val - 4)` <br>
+
 
 The original syntax still works fine with it as well.
 
@@ -195,7 +200,7 @@ class Demo_VT(Scene):
         self.add(circ)
         self.play(r@3)
         self.wait()
-        self.play(r@1)
+        self.play(r-1)
         self.wait()
 ```
 ![](/demo/resources/Demo_VT.gif)
@@ -219,7 +224,7 @@ class Demo_DN(Scene):
         self.play(r@3)
         self.wait()
 ```
-![](/demo/resources/Demo_VT.gif)
+![](/demo/resources/Demo_DN.gif)
 
 ### bounding_box(mobject)
 This function returns a VGroup of Dots and Lines which represent the critical points and bounding box of a mobject. Helpful as a debugging or explanatory tool for stuff that depends on alignment with critical points.
