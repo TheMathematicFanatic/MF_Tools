@@ -145,5 +145,44 @@ class Demo_SurroundingRectangleUnion2(Scene):
         self.add(index_labels(V))
 
 
+class Demo_TransformByGlyphMap1(Scene):
+    def construct(self):
+        exp1 = MathTex("f(x) = 4x^2 + 5x + 6")
+        exp2 = MathTex("f(-3) = 4(-3)^2 + 5(-3) + 6")
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([2], [2,3]),
+            ([6], [7,8,9,10]),
+            ([10], [14,15,16,17])
+        ))
+        self.wait()
 
+
+class Demo_TransformByGlyphMap2(Scene):
+    def construct(self):
+        exp1 = MathTex("c^2 = a^2 + b^2")
+        exp2 = MathTex("c = \\sqrt{a^2 + b^2}")
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([1], [2,3], {"path_arc":-PI/3}),
+            ([2], [1], {"path_arc":-PI/4}),
+        ))
+        self.wait()
+
+
+class Demo_TransformByGlyphMap3(Scene):
+    def construct(self):
+        exp1 = MathTex("ax^2 + bx + c = 0")
+        exp2 = MathTex("x^2 + \\frac{b}{a}x + \\frac{c}{a} = 0")
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0], [5], {"path_arc":2/3*PI}),
+            ([0], [10], {"path_arc":1/2*PI}),
+            ([], [4,9]),
+            run_time=2
+        ))
+        self.wait()
 
