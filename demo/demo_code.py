@@ -186,3 +186,15 @@ class Demo_TransformByGlyphMap3(Scene):
         ))
         self.wait()
 
+
+class Demo_TransformByGlyphMap4(Scene):
+    def construct(self):
+        exp1 = MathTex("\\frac{x^2y^3}{w^4z^{-8}}")
+        exp2 = MathTex("\\frac{x^2y^3z^8}{w^4}")
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([7,9], [4,5]),
+            ([8], [], {"shift":UP}),
+        ))
+        self.wait()

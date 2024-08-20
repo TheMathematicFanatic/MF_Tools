@@ -52,8 +52,11 @@ class TransformByGlyphMap(AnimationGroup):
                 for mob in introduced_mobs:
                     animations.append(Introducer(
                         mob,
-                        shift = B.get_center() - A.get_center() if shift_fades else ORIGIN,
-                        **{**kwargs, **entry_kwargs}
+                        **{
+                            **kwargs,
+                            **{"shift":B.get_center() - A.get_center() if shift_fades else ORIGIN},
+                            **entry_kwargs
+                        }
                         ))
                     if "delay" in entry_kwargs:
                         animations[-1] = Succession(Wait(entry_kwargs["delay"]), animations[-1])
@@ -64,8 +67,11 @@ class TransformByGlyphMap(AnimationGroup):
                 for mob in removed_mobs:
                     animations.append(Remover(
                         mob,
-                        shift = B.get_center() - A.get_center() if shift_fades else ORIGIN,
-                        **{**kwargs, **entry_kwargs}
+                        **{
+                            **kwargs,
+                            **{"shift":B.get_center() - A.get_center() if shift_fades else ORIGIN},
+                            **entry_kwargs
+                        }
                         ))
                     if "delay" in entry_kwargs:
                         animations[-1] = Succession(Wait(entry_kwargs["delay"]), animations[-1])
@@ -74,7 +80,10 @@ class TransformByGlyphMap(AnimationGroup):
                 animations.append(ReplacementTransform(
                     VGroup(*[A[i].copy() if i in mentioned_from_indices else A[i] for i in entry[0]]),
                     VG(B,entry[1]),
-                    **{**kwargs, **entry_kwargs}
+                    **{
+                        **kwargs,
+                        **entry_kwargs
+                        }
                     ))
                 if "delay" in entry_kwargs:
                     animations[-1] = Succession(Wait(entry_kwargs["delay"]), animations[-1])
