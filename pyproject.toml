@@ -8,7 +8,7 @@ repository = "https://github.com/TheMathematicFanatic/MF_Tools"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<=3.12"
+python = ">=3.8"
 manim = ">=0.17"
 
 #[tool.poetry.plugins."manim.plugins"]
