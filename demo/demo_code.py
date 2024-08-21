@@ -92,14 +92,62 @@ class Demo_bounding_box(Scene):
 
 
 
-class Demo_SurroundingRectangleUnion(Scene):
+class Demo_SurroundingRectangleUnion1(Scene):
     def construct(self):
         V = VGroup(*[Circle(0.5, color=GRAY) for _ in range(36)]).arrange_in_grid(rows=4, cols=9)
-        self.add(V)
-        self.add(index_labels(V))
-        self.add(SurroundingRectangleUnion(*V[0:3], *V[9:11], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=GREEN))
-        self.add(SurroundingRectangleUnion(*V[3:6], *V[11:16], V[21], V[30], *V[33:36], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=BLUE))
-        self.add(SurroundingRectangleUnion(*V[24:26], *V[16:18], *V[8], *V[27:30], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=RED))
+        self.add(V, index_labels(V))
+        groups = [
+            [0,1,2,9,10],
+            [3,4,5,11,12,13,14,15,21,30,33,34,35],
+            [24,25,16,17,8,27,28,29]
+        ]
+        for group, color in zip(groups, [GREEN, BLUE, RED]):
+            self.add(SurroundingRectangleUnion(*[V[i] for i in group], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=color))
+
+
+class Demo_SurroundingRectangleUnion2(Scene):
+    def construct(self):
+        voters = VGroup(*[Circle(radius=0.6, stroke_color=WHITE, fill_opacity=1, fill_color=BLUE) for _ in range(15)])
+        voters.arrange_in_grid(rows=3, cols=5, buff=(0.6, 0.6))
+        [voters[i].set(fill_color=GOLD) for i in [0,1,2,5,6,10]]      
+        Districts = VGroup(
+            VGroup(*[voters[i] for i in [0,1,2,3,4]]),
+            VGroup(*[voters[i] for i in [5,6,7,10,11]]),
+            VGroup(*[voters[i] for i in [8,9,12,13,14]])
+        )
+        buffvt, unbuffvt, cornervt = VT(0.1), VT(0), VT(0)
+        Borders = VGroup(*[
+            always_redraw(lambda district=district:
+                SurroundingRectangleUnion(*district, stroke_color=YELLOW, buff=~buffvt, unbuff=~unbuffvt, corner_radius=~cornervt)
+            )
+            for district in Districts
+        ])
+        self.add(voters)
+        self.play(Create(Borders))
+        self.wait()
+        self.play(buffvt@0.4)
+        self.wait()
+        self.play(unbuffvt@0.2)
+        self.wait()
+        self.play(cornervt@0.3)
+        self.wait()
+
+
+class Demo_SurroundingRectangleUnion3(Scene):
+    def construct(self):
+        A = Circle().move_to(DL)
+        B = Text("Hello").move_to(UP)
+        C = MathTex("a^2 + b^2").move_to(RIGHT)
+        SR = always_redraw(lambda:
+            SurroundingRectangleUnion(A, B, C, buff=0.5, corner_radius=0.1, stroke_color=GREEN)
+        )
+        self.add(A, B, C, SR)
+        self.wait()
+        self.play(A.animate.shift(2*LEFT), run_time=2, rate_func=there_and_back)
+        self.wait()
+        self.play(Rotate(VGroup(A,B,C), TAU), run_time=2)
+        self.wait()
+
 
 
 class Demo_TransformByGlyphMap0(Scene):
