@@ -1,4 +1,4 @@
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 __author__ = 'John Connell - The Mathematic Fanatic'
 __description__ = 'Collection of helpful utilities for Manim'
 
