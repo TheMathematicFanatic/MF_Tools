@@ -29,12 +29,15 @@ it will instead trigger an introducer (default `FadeIn`) or a remover (default `
 Each glyph_map entry can receive an optional third element, which is a dictionary of kwargs to be passed to the corresponding animation. For example,
 
 `([3,4,5], [5,6,7], {"path_arc":PI/2}),` <br>
-`([7,8,9,10,11], [], {"run_time":0.5})`
+`([7,8,9,10,11], [], {"run_time":1.5, "delay":0.5})`
 
-As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. It is expected that the indices that are NOT mentioned will be equally numerous between the two. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If not, the transform will not work, and it will instead trigger the alternate mode of the animation, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This mode can also be triggered with `show_indices=True`, or with an empty glyph_map entry `([], [])`. This is intended to help the user in filling out the indices of the glyph_map, or correcting an index mistake.
+`delay` is a special kwarg which will cause the animation to wait for that many seconds before starting.
 
+TransformByGlyphMap has two modes: its regular mode, which transforms mobject glyphs into one another, and its alternate `show_indices` mode, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This is intended to assist the user in filling out the indices of the glyph_map, without requiring them to call and then delete a different function to do so. The alternate mode can be triggered in several ways, including with the parameter `show_indices=True`, or by passing an empty glyph_map, or an empty glyph_map entry `([], [])`.
 
-If you're still awake, here is a demonstration:
+As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. It is expected that the indices that are NOT mentioned will be equally numerous between the two. In this case, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
+
+If you're still awake after all that, here is a demonstration:
 ```py
 class Demo_TransformByGlyphMap0(Scene):
     def construct(self):
@@ -47,7 +50,7 @@ class Demo_TransformByGlyphMap0(Scene):
 ```
 ![](/demo/resources/Demo_TransformByGlyphMap0.gif)
 
-By passing no glyph_map (or an empty glyph_map entry, or the parameter `show_indices=True`), it triggers the show_indices mode of the animation. By inspecting the indices, the user can then fill in the glyph_map.
+I recommend one first pass no glyph_map to trigger the `show_indices` mode. By inspecting the indices, the user can then fill in the glyph_map.
 
 ```py
 class Demo_TransformByGlyphMap1(Scene):
@@ -65,7 +68,30 @@ class Demo_TransformByGlyphMap1(Scene):
 ```
 ![](/demo/resources/Demo_TransformByGlyphMap1.gif)
 
-Here are a few more examples!
+TransformByGlyphMap can accept many additional parameters to control its behavior. The following is an exhaustive list of its parameters and what they do:
+
+- **mobA -** Starting mobject (required)
+- **mobB -** Target mobject (required)
+- **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
+- **from_copy -** Boolean, defaults to False. If True, then the original mobA will be left alone while a copy of it is transformed into mobB.
+- **mobA_submobject_index -** List of integers. Determines which submobject of A, or which submobject of which submobject of A, etc., upon which to act. Defaults to [0], which is perfect for the structure of MathTex mobjects.
+- **mobB_submobject_index -** List of integers, defaults to [0]. Same as mobA_submobject_index, but for the target mobject.
+- **default_introducer -** Animation, defaults to FadeIn. The introducer to use when the first list of indices in a glyph_map entry is empty.
+- **default_remover -** Animation, defaults to FadeOut. The remover to use when the second list of indices in a glyph_map entry is empty.
+- **introduce_individually -** Boolean, defaults to False. If True, then introducers will be applied individually to each submobject mentioned by a glyph_map entry, rather than to them all as a VGroup. Makes no difference for FadeIn, but can be nicer for Write or GrowFromPoint.
+- **remove_individually -** Boolean, defaults to False. Same as introduce_individually, but for the removal animations.
+- **shift_fades -** Boolean, defaults to True. If True, then the introducers and removers will receive a shift parameter in the general direction of motion between the two mobjects being operated on. Really only noticeable if the two mobjects are in substantially different positions, it can be jarring for most glyphs to travel far but the fades stay in place.
+- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the number of indices not mentioned in the glyph_map.
+- **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. The show_indices mode is only intended to be shown to the programmer and not the final viewer; I encourage you change it in the source code to your taste.
+- **B_index_labels_color -** Color, defaults to BLUE_D. Same as A_index_labels_color, but for mobB.
+- **index_label_height -** Float, defaults to 0.18. Determines the size of the index_labels. This is just the size I thought was nicest; change in the source code to your taste.
+- **printing -** Boolean, defaults to False. If True, then each entry of the glyph_map is printed to the console, followed by the lists of all mentioned and unmentioned indices from both mobA and mobB.
+- **\*\*kwargs -** Arbitrary keyword arguments. These are passed to the ReplacementTransforms of the unmentioned indices, and to the final AnimationGroup of everything. Also passed to the animations generated by mentioned indices, but are overwritten by any kwargs in the entry.
+
+<br> <br>
+
+Here are a few more examples of how you can use TransformByGlyphMap:
+
 ```py
 class Demo_TransformByGlyphMap2(Scene):
     def construct(self):
@@ -117,8 +143,6 @@ class Demo_TransformByGlyphMap4(Scene):
 ```
 ![](/demo/resources/Demo_TransformByGlyphMap4.gif)
 
-`delay` is a special kwarg that delays the animation corresponding to that entry for the specified amount of time. It does not affect its `run_time`; this can also be passed separately. Sometimes it is nice for the parentheses etc to not appear until after everyone else has moved into place.
-
 ```py
 class Demo_TransformByGlyphMap5(Scene):
     def construct(self):
@@ -136,30 +160,24 @@ class Demo_TransformByGlyphMap5(Scene):
 ```
 ![](/demo/resources/Demo_TransformByGlyphMap5.gif)
 
-
-TransformByGlyphMap can accept many additional parameters to control its behavior. The following is an exhaustive list of its parameters and what they do:
-
-- **mobA -** Starting mobject (required)
-- **mobB -** Target mobject (required)
-- **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
-- **from_copy -** Boolean, defaults to False. If True, then the original mobA will be left alone while a copy of it is transformed into mobB.
-- **mobA_submobject_index -** List of integers. Determines which submobject of A, or which submobject of which submobject of A, etc., upon which to act. Defaults to [0], which is perfect for the structure of MathTex mobjects.
-- **mobB_submobject_index -** List of integers, defaults to [0]. Same as mobA_submobject_index, but for the target mobject.
-- **default_introducer -** Animation, defaults to FadeIn. The introducer to use when the first list of indices in a glyph_map entry is empty.
-- **default_remover -** Animation, defaults to FadeOut. The remover to use when the second list of indices in a glyph_map entry is empty.
-- **introduce_individually -** Boolean, defaults to False. If True, then introducers will be applied individually to each submobject mentioned by a glyph_map entry, rather than to them all as a VGroup. Makes no difference for FadeIn, but can be nicer for Write or GrowFromPoint.
-- **remove_individually -** Boolean, defaults to False. Same as introduce_individually, but for the removal animations.
-- **shift_fades -** Boolean, defaults to True. If True, then the introducers and removers will receive a shift parameter in the general direction of motion between the two mobjects being operated on. Really only noticeable if the two mobjects are in substantially different positions, it can be jarring for most glyphs to travel far but the fades stay in place.
-- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the number of indices not mentioned in the glyph_map.
-- **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. The show_indices mode is only intended to be shown to the programmer and not the final viewer; I encourage you change it in the source code to your taste.
-- **B_index_labels_color -** Color, defaults to BLUE_D. Same as A_index_labels_color, but for mobB.
-- **index_label_height -** Float, defaults to 0.18. Determines the size of the index_labels. This is just the size I thought was nicest; change in the source code to your taste.
-- **printing -** Boolean, defaults to False. If True, then each entry of the glyph_map is printed to the console, followed by the lists of all mentioned and unmentioned indices from both mobA and mobB.
-- **\*\*kwargs -** Arbitrary keyword arguments. These are passed to the ReplacementTransforms of the unmentioned indices, and to the final AnimationGroup of everything. Also passed to the animations generated by mentioned indices, but are overwritten by any kwargs in the entry.
-
-<br> <br>
-
-Here are a few more examples of how you can use TransformByGlyphMap:
+```py
+class Demo_TransformByGlyphMap6(Scene):
+    def construct(self):
+        exp1 = MathTex("4x^2 - x^2 + 5x + 3x - 7")
+        exp2 = MathTex("3x^2 + 8x - 7")
+        VGroup(exp1, exp2).arrange(DOWN, buff=1).scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0,3], [0]),
+            ([1,2], [1,2]),
+            ([4,5], [1,2]),
+            ([7,8,9,10,11], [4,5]),
+            from_copy=True
+        ))
+        self.wait()
+```
+![](/demo/resources/Demo_TransformByGlyphMap6.gif)
 
 
 ## Common Updaters

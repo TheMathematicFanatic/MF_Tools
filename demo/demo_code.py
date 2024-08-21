@@ -227,3 +227,20 @@ class Demo_TransformByGlyphMap5(Scene):
             introduce_individually=True,
         ))
         self.wait()
+
+
+class Demo_TransformByGlyphMap6(Scene):
+    def construct(self):
+        exp1 = MathTex("4x^2 - x^2 + 5x + 3x - 7")
+        exp2 = MathTex("3x^2 + 8x - 7")
+        VGroup(exp1, exp2).arrange(DOWN, buff=1).scale(2)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0,3], [0]),
+            ([1,2], [1,2]),
+            ([4,5], [1,2]),
+            ([7,8,9,10,11], [4,5]),
+            from_copy=True
+        ))
+        self.wait()
