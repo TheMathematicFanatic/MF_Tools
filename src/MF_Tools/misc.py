@@ -140,7 +140,7 @@ class SurroundingRectangleUnion(VGroup):
         super().__init__(*[Polygon(*poly, **kwargs) for poly in self.polygons], **kwargs)
         if corner_radius > 0: self.round_corners(corner_radius)
         
-    def apply_unbuff(self,unbuff):
+    def apply_unbuff(self, unbuff):
         poly_copy = deepcopy(self.polygons)
         for j,poly in enumerate(poly_copy):
             for i,v in enumerate(poly):

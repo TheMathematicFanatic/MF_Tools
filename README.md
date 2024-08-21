@@ -350,3 +350,28 @@ class Demo_indexx_labels(Scene):
         self.add(indexx_labels(M1), indexx_labels(M2))
 ```
 ![](demo/resources/Demo_indexx_labels.png)
+
+
+### SurroundingRectangleUnion(*mobjects)
+Takes several mobjects and returns a VMobject that surrounds them.
+
+First it constructs SurroundingRectangles around each mobject with the given `buff` parameter and then Unions them all together. This may result in a single polygon, or multiple polygons, up to one for each mobject if none intersect. Tune so that as many of them merge as you desire.
+
+Next it pulls in all the sides by the distance specified by the `unbuff` parameter. Tune so that adjacent SurroundingRectangleUnions of different objects don't intersect each other.
+
+Finally it rounds all of the corners according to the `corner_radius` parameter. Tune to your liking.
+
+It can accept any kwargs that VMobjects accept, including stroke_color and stroke_width.
+
+```py
+class Demo_SurroundingRectangleUnion(Scene):
+    def construct(self):
+        V = VGroup(*[Circle(0.5, color=GRAY) for _ in range(36)]).arrange_in_grid(rows=4, cols=9)
+        self.add(V)
+        self.add(index_labels(V))
+        self.add(SurroundingRectangleUnion(*V[0:3], *V[9:11], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=GREEN))
+        self.add(SurroundingRectangleUnion(*V[3:6], *V[11:16], V[21], V[30], *V[33:36], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=BLUE))
+        self.add(SurroundingRectangleUnion(*V[24:26], *V[16:18], *V[8], *V[27:30], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=RED))
+```
+![](/demo/resources/Demo_SurroundingRectangleUnion.png)
+

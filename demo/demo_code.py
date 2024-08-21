@@ -91,58 +91,15 @@ class Demo_bounding_box(Scene):
         ])
 
 
+
 class Demo_SurroundingRectangleUnion(Scene):
     def construct(self):
-        V_mobs = VGroup(
-            C := Circle().shift(DL*2),
-            T := Text("Hello"),
-            M := MathTex("a^2+b^2=c^2").shift(2*UP),
-        )
-        buffvt, unbuffvt, cornervt = VT(1), VT(0.2), VT(0.25)
-        V_dec = VGroup(
-            buff_dec := DN(buffvt),
-            unbuff_dec := DN(unbuffvt),
-            corner_dec := DN(cornervt),
-        ).arrange(RIGHT).to_edge(DOWN)
-        self.add(V_mobs, V_dec)
-        self.add(
-            always_redraw(lambda: 
-                SurroundingRectangleUnion(
-                    *V_mobs,
-                    buff=~buffvt,
-                    unbuff=~unbuffvt,
-                    corner_radius=~cornervt,
-                    stroke_color=GREEN,
-                )
-            )
-        )
-        self.play(buffvt @ 3)
-        self.wait()
-        self.play(unbuffvt @ 0)
-        self.wait()
-        self.play(cornervt @ 0)
-        self.wait()
-        self.play(unbuffvt @ 0.5)
-        self.wait()
-        self.play(buffvt@1)
-        self.wait()
-        self.play(unbuffvt @ 0)
-        self.wait()
-        self.play(cornervt @ 0.1)
-        self.wait()
-        self.play(buffvt @ 0)
-        self.wait()
-        self.play(C.animate.shift(UR*5), run_time=4)
-        self.wait()
-
-
-class Demo_SurroundingRectangleUnion2(Scene):
-    def construct(self):
-        V = VGroup(*[Circle(0.5) for _ in range(36)]).arrange_in_grid(rows=4, cols=9)
+        V = VGroup(*[Circle(0.5, color=GRAY) for _ in range(36)]).arrange_in_grid(rows=4, cols=9)
         self.add(V)
-        self.add(SurroundingRectangleUnion(*V[0:3], *V[9:11], buff=0.2, unbuff=0.18, corner_radius=0.25, stroke_color=GREEN))
-        self.add(SurroundingRectangleUnion(*V[3:6], *V[11:16], V[21], V[30], *V[33:36], buff=0.2, unbuff=0.18, corner_radius=0.25, stroke_color=BLUE))
         self.add(index_labels(V))
+        self.add(SurroundingRectangleUnion(*V[0:3], *V[9:11], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=GREEN))
+        self.add(SurroundingRectangleUnion(*V[3:6], *V[11:16], V[21], V[30], *V[33:36], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=BLUE))
+        self.add(SurroundingRectangleUnion(*V[24:26], *V[16:18], *V[8], *V[27:30], buff=0.2, unbuff=0.12, corner_radius=0.25, stroke_color=RED))
 
 
 class Demo_TransformByGlyphMap0(Scene):
