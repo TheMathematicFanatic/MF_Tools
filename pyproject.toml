@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "MF-Tools"
-version = "1.0.0"
+version = "1.1.0"
 description = "Collection of helpful utilities for Manim"
 authors = ["John Connell <johnconnelltutor@gmail.com>"]
 license = "MIT"
@@ -11,8 +11,8 @@ readme = "README.md"
 python = ">=3.8,<=3.12"
 manim = ">=0.17"
 
-[tool.poetry.plugins."manim.plugins"]
-"manim_play_timeline" = "manim_play_timeline"
+#[tool.poetry.plugins."manim.plugins"]
+#"manim_play_timeline" = "manim_play_timeline"
 
 [build-system]
 requires = ["poetry-core"]
