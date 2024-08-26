@@ -7,7 +7,7 @@ The most significant among them is TransformByGlyphMap, but there are also sever
 ## Transforms
 
 ### TransformByGlyphMap
-This animation class dramatically simplifies the process and syntax of animating complicated transformations of complicated mobjects. It was made to be used with MathTex for things like algebra animations, but it can be used for any VMobject.
+This animation class dramatically simplifies the process and syntax of animating complicated transformations of complicated mobjects. It can be used on any VMobjects, but it was conceived to be used with MathTex for things like algebra animations. Thus, many of the default parameters are specific to this use case, and some of the language I use in this documentation is specific to this use case, such as using "glyph" and "submobject" interchangeably.
 
 Like all Transforms, it receives two mobjects, but its primary parameter after that is its glyph_map. This consists of an arbitrary number of 2-tuples of lists of integers, such as
 
@@ -15,7 +15,7 @@ Like all Transforms, it receives two mobjects, but its primary parameter after t
 `([0], [5]),` <br>
 `([1,2], [2,4])` <br>
 
-Each tuple will send the VGroup of submobjects at the first list of indices in the starting mobject, to the VGroup of submobjects at the second list of indices in the target mobject, with a simple `ReplacementTransform`.
+Each tuple will send the VGroup of glyphs/submobjects at the first list of indices in the starting mobject, to the VGroup of glyphs/submobjects at the second list of indices in the target mobject, with a simple `ReplacementTransform`.
 
 If one of the lists is empty, such as
 
@@ -35,7 +35,7 @@ Each glyph_map entry can receive an optional third element, which is a dictionar
 
 TransformByGlyphMap has two modes: its regular mode, which transforms mobject glyphs into one another, and its alternate `show_indices` mode, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This mode is intended to assist the user in filling out the indices of the glyph_map, without requiring them to call and then delete a different function (namely `index_labels`) to do so. The alternate mode can be triggered in several ways, including with the parameter `show_indices=True`, or by passing an empty glyph_map, or an empty glyph_map entry `([], [])`.
 
-As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. It is expected that the indices that are NOT mentioned will be equally numerous between the two. In this case, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
+As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. If a a glyph_map entry contains an index from the original mobject that has already occurred, a copy of that glyph is given to the corresponding animation so as not to disturb the action of the other animations already acting on that glyph. When the entire glyph_map has been parsed and converted into animations, it is expected that the all of the indices that have NOT been mentioned will be equally numerous between the original and target mobjects. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
 
 If you're still awake after all that, here is a demonstration:
 ```py
@@ -50,7 +50,7 @@ class Demo_TransformByGlyphMap0(Scene):
 ```
 ![](/demo/resources/Demo_TransformByGlyphMap0.gif)
 
-I recommend one first pass no glyph_map to trigger the `show_indices` mode. By inspecting the indices, the user can then fill in the glyph_map.
+I recommend one first pass no glyph_map to trigger the `show_indices` mode. By inspecting the indices, the user can then fill in the glyph_map. Notice how only the "active" indices need to be mentioned in the glyph_map. All of the inactive indices automatically know where to go, because they are equally numerous between the two mobjects and so are just transformed into each other in order, resulting in the inactive glyphs sliding over to their new positions without any specific direction from the user.
 
 ```py
 class Demo_TransformByGlyphMap1(Scene):
