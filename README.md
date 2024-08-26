@@ -237,6 +237,8 @@ class Demo_Arc3d(ThreeDScene):
 ## Miscellaneous
 
 ### Vcis(angle)
+Have you ever found yourself writing the idiom `np.cos(angle)*RIGHT + np.sin(angle)*UP`? No longer!
+
 This simple function returns the unit vector pointing in the direction of the given angle, measured counterclockwise from the positive x-axis. If `clockwise=True` is passed, instead the angle is measured clockwise from the positive y-axis.
 
 Its name means the vector version of the cis function, or the cos + i*sin function.
@@ -260,15 +262,16 @@ class Demo_Vcis(Scene):
 Shorthand subclass of Manim's ValueTracker, invented by @Abulafia.
 It has the following shorthands compared to its superclass:
 
-`val = ValueTracker(5)` --> `val = VT(5)` <br>
-`val.get_value()` --> `~val` <br>
-`val.set_value(3)` --> `val @= 3` <br>
-`self.play(val.animate.set_value(9))` --> `self.play(val @ 9)` <br>
-`val.increment_value(4)` --> `val += 4` <br>
-`self.play(val.animate.increment_value(4)) ` --> `self.play(val + 4)` <br>
-`val.increment_value(-4)` --> `val -= 4` <br>
-`self.play(val.animate.increment_value(-4)) ` --> `self.play(val - 4)` <br>
-
+| VT Shorthand            | ValueTracker Longhand                              |
+| ----------------------- | -------------------------------------------------- |
+| `val = VT(5)`           | `val = ValueTracker(5)`                            |
+| `~val`                  | `val.get_value()`                                  |
+| `val @= 3`              | `val.set_value(3)`                                 |
+| `self.play(val @ 9)`    | `self.play(val.animate.set_value(9))`              |
+| `val += 4`              | `val.increment_value(4)`                           |
+| `self.play(val + 4)`    | `self.play(val.animate.increment_value(4))`        |
+| `val -= 4`              | `val.increment_value(-4)`                          |
+| `self.play(val - 4)`    | `self.play(val.animate.increment_value(-4))`       |
 
 The original syntax still works fine with it as well.
 
