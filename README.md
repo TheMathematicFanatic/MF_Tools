@@ -3,10 +3,12 @@ MF-Tools is a collection of various utilities that are helpful for creating Mani
 
 The most significant among them is TransformByGlyphMap, but there are also several other small tools in the collection, and I expect to continue to grow the collection over time.
 
+I recommend installing with `pip install MF-Tools`
 
-## Transforms
 
-### TransformByGlyphMap
+# Transforms
+
+## TransformByGlyphMap
 This animation class dramatically simplifies the process and syntax of animating complicated transformations of complicated mobjects. It can be used on any VMobjects, but it was conceived to be used with MathTex for things like algebra animations. Thus, many of the default parameters are specific to this use case, and some of the language I use in this documentation is specific to this use case, such as using "glyph" and "submobject" interchangeably.
 
 Like all Transforms, it receives two mobjects, but its primary parameter after that is its glyph_map. This consists of an arbitrary number of 2-tuples of lists of integers, such as
@@ -178,9 +180,9 @@ class Demo_TransformByGlyphMap6(Scene):
 ![](/demo/resources/Demo_TransformByGlyphMap6.gif)
 
 
-## Common Updaters
+# Common Updaters
 
-### Scene.keep_orientation()
+## Scene.keep_orientation()
 ***WARNING: Currently bugged/incomplete, as can be seen in the demo below***
 
 Within a Scene one can perform
@@ -208,10 +210,10 @@ def construct(self):
 ![](/demo/resources/Demo_keep_orientation.gif)
 
 
-## Geometry
+# Geometry
 
-### Arc3d
-Simple 3D arc for any orientation, invented by @uwezi. Receives three points or mobjects as the start, end, and center.
+## Arc3d
+Simple 3D arc for any orientation, invented by @uwezi. Receives three points as the start, end, and center.
 
 ```py
 class Demo_Arc3d(ThreeDScene):
@@ -234,9 +236,9 @@ class Demo_Arc3d(ThreeDScene):
 ![](/demo/resources/Demo_Arc3d.gif)
 
 
-## Miscellaneous
+# Miscellaneous
 
-### Vcis(angle)
+## Vcis(angle)
 Have you ever found yourself writing the idiom `np.cos(angle)*RIGHT + np.sin(angle)*UP`? No longer!
 
 This simple function returns the unit vector pointing in the direction of the given angle, measured counterclockwise from the positive x-axis. If `clockwise=True` is passed, instead the angle is measured clockwise from the positive y-axis.
@@ -258,7 +260,7 @@ class Demo_Vcis(Scene):
 ![](/demo/resources/Demo_Vcis.png)
 
 
-### VT(number)
+## VT(number)
 Shorthand subclass of Manim's ValueTracker, invented by @Abulafia.
 It has the following shorthands compared to its superclass:
 
@@ -290,7 +292,7 @@ class Demo_VT(Scene):
 ![](/demo/resources/Demo_VT.gif)
 
 
-### DN(callable)
+## DN(callable)
 Shorthand for Manim's DecimalNumber with automatic updaters.
 Receives a ValueTracker or callable as its first argument, followed by any other arguments accepted by Manim's DecimalNumber class.
 Automatically receives an updater which will keep it accurate to the current state of its ValueTracker or callable.
@@ -310,7 +312,7 @@ class Demo_DN(Scene):
 ```
 ![](/demo/resources/Demo_DN.gif)
 
-### bounding_box(mobject)
+## bounding_box(mobject)
 This function returns a VGroup of Dots and Lines which represent the critical points and bounding box of a mobject. Helpful as a debugging or explanatory tool for stuff that depends on alignment with critical points.
 
 The optional `always` parameter can be set to True in order for it to receive an updater which will always keep it accurate to the current state of its mobject.
@@ -335,7 +337,7 @@ class Demo_bounding_box(Scene):
 ![](/demo/resources/Demo_bounding_box.gif)
 
 
-### indexx_labels(mobject)
+## indexx_labels(mobject)
 This is an upgrade to Manim's `index_labels`.
 
 It uses multiple colors to show the indices of two layers of submobjects instead of just one, very useful for multi-string Tex mobjects. By default it cycles through the six standard rainbow colors, but you can pass your own list of colors as the `colors` parameter.
@@ -353,7 +355,7 @@ class Demo_indexx_labels(Scene):
 ![](demo/resources/Demo_indexx_labels.png)
 
 
-### SurroundingRectangleUnion(*mobjects)
+## SurroundingRectangleUnion(*mobjects)
 Takes several mobjects and returns a VMobject that surrounds them. Inspired by @Viks on Manim Discord.
 
 First it constructs SurroundingRectangles around each mobject with the given `buff` parameter and then Unions them all together. This may result in a single polygon, or multiple polygons, up to one for each mobject if none intersect. Tune so that as many of them merge as you desire.

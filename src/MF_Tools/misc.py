@@ -41,7 +41,7 @@ def DN(value_source, *args, **kwargs):
     return result
 
 
-def CoordPair(
+def CoordPair( # This is just not working that well lol. Maybe I will return to this later
     tracked_mobject,
     decimal_number_kwargs = {},
     next_to_dir = None,
