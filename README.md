@@ -76,7 +76,7 @@ TransformByGlyphMap can accept many additional parameters to control its behavio
 - **mobB -** Target mobject (required)
 - **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
 - **from_copy -** Boolean, defaults to False. If True, then the original mobA will be left alone while a copy of it is transformed into mobB.
-- **mobA_submobject_index -** List of integers. Determines which submobject of A, or which submobject of which submobject of A, etc., upon which to act. Defaults to [0], which is perfect for the structure of MathTex mobjects.
+- **mobA_submobject_index -** List of integers. Determines which submobject of mobA, or which submobject of which submobject of mobA, etc., upon which to act. For example, [0,3,1] will cause it to act on mobA[0][3][1].Defaults to [0], which is perfect for the structure of MathTex mobjects.
 - **mobB_submobject_index -** List of integers, defaults to [0]. Same as mobA_submobject_index, but for the target mobject.
 - **default_introducer -** Animation, defaults to FadeIn. The introducer to use when the first list of indices in a glyph_map entry is empty.
 - **default_remover -** Animation, defaults to FadeOut. The remover to use when the second list of indices in a glyph_map entry is empty.
