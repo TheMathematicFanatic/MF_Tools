@@ -24,7 +24,7 @@ If one of the lists is empty, such as
 `([], [1,4]),` <br>
 `([8,9,10], [])`
 
-it will instead trigger an introducer (default `FadeIn`) or a remover (default `FadeOut`) to act on that VGroup of submobjects. If you would prefer a different introducer/remover, you can replace the empty list with the animation of your choice, such as
+it will instead trigger an introducer (default `FadeIn`) or a remover (default `FadeOut`) to act on that VGroup of glyphs. If you would prefer a different introducer/remover, you can replace the empty list with the animation of your choice, such as
 
 `(Write, [5,6,7,8])`
 
@@ -37,7 +37,7 @@ Each glyph_map entry can receive an optional third element, which is a dictionar
 
 TransformByGlyphMap has two modes: its regular mode, which transforms mobject glyphs into one another, and its alternate `show_indices` mode, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This mode is intended to assist the user in filling out the indices of the glyph_map, without requiring them to call and then delete a different function (namely `index_labels`) to do so. The alternate mode can be triggered in several ways, including with the parameter `show_indices=True`, or by passing an empty glyph_map, or an empty glyph_map entry `([], [])`.
 
-As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. If a a glyph_map entry contains an index from the original mobject that has already occurred, a copy of that glyph is given to the corresponding animation so as not to disturb the action of the other animations already acting on that glyph. When the entire glyph_map has been parsed and converted into animations, it is expected that the all of the indices that have NOT been mentioned will be equally numerous between the original and target mobjects. If so, each of those submobjects will be `ReplacementTransform`ed into one another, in order, so that every single submobject of the original is accounted for and transformed into a submobject of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
+As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. If a a glyph_map entry contains an index from the original mobject that has already occurred, a copy of that glyph is given to the corresponding animation so as not to disturb the action of the other animations already acting on that glyph. When the entire glyph_map has been parsed and converted into animations, it is expected that the all of the indices that have NOT been mentioned will be equally numerous between the original and target mobjects. If so, each of those glyphs will be `ReplacementTransform`ed into one another, in order, so that every single glyph of the original is accounted for and transformed into a glyph of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
 
 If you're still awake after all that, here is a demonstration:
 ```py
