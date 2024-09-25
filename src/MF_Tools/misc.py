@@ -116,7 +116,7 @@ def indexx_labels(
             label_height=label_height,
             **kwargs
             )
-        for i in range(len(mobject))
+        for i in range(len(mobject.submobjects))
     ])
 
 
