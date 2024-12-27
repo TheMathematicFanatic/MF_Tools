@@ -6,5 +6,6 @@ from .transforms import *
 from .updaters import *
 from .geometry import *
 from .misc import *
+from .animations import *
 
 #from manim_play_timeline import *

@@ -249,3 +249,62 @@ class Demo_TransformByGlyphMap6(Scene):
             from_copy=True
         ))
         self.wait()
+
+
+class Demo_TransformByGlyphMap7(Scene):
+    def construct(self):
+        exp1 = MathTex("1 \\over x").scale(1.8)
+        exp2 = MathTex("{ { 1 \\over x } - { 1 \\over x } } + 10").scale(1.8)
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([0,1,2], [0,1,2]),
+            ([0,1,2], [4,5,6]),
+            default_introducer=Write,
+            auto_resolve=True
+        ))
+        self.wait()
+
+
+class Demo_GhostFadeSlide(Scene):
+    def construct(self):
+        tex = MathTex("yomama")
+        sq = Square()
+
+        tex.shift(DR)
+        sq.shift(2*UP)
+        self.wait()
+        #self.play(ScaleAndFade(tex, living_opacity=1), run_time=5)
+        self.play(AnimationGroup(
+            GhostSlideFade(tex),
+            GhostSlideFade(sq),
+            lag_ratio=0.5,
+            run_time=6
+        ))
+        self.wait()
+
+import random
+class Demo_GhostFadeSlide_2(Scene):
+    def construct(self):
+        polynomials = []
+        for _ in range(10):
+            a = random.randint(-10, 10)
+            b = random.randint(-10, 10)
+            c = random.randint(-10, 10)
+            poly = MathTex(f"{a}x^2 + {b}x + {c}")
+            poly.scale(random.uniform(0.2, 1.2))
+            poly.move_to([
+                random.uniform(-7, 7),
+                random.uniform(-4, 4),
+                0
+            ])
+            polynomials.append(poly)
+
+        animations = []
+        for poly in polynomials:
+            lifetime = random.uniform(2, 6)
+            animation = GhostSlideFade(poly, run_time=lifetime)
+            animations.append(animation)
+
+        self.play(AnimationGroup(*animations, lag_ratio=0.1))
+        self.wait()

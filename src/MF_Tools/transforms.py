@@ -6,6 +6,7 @@ class TransformByGlyphMap(AnimationGroup):
         mobA,
         mobB,
         *glyph_map,
+        auto_resolve=False,
         from_copy=False,
         mobA_submobject_index=[0],
         mobB_submobject_index=[0],
@@ -14,6 +15,7 @@ class TransformByGlyphMap(AnimationGroup):
         introduce_individually=False,
         remove_individually=False,
         shift_fades=True,
+        auto_resolve_delay=0.5,
         show_indices=False,
         A_index_labels_color=RED_D,
         B_index_labels_color=BLUE_D,
@@ -92,21 +94,18 @@ class TransformByGlyphMap(AnimationGroup):
             else:
                 raise ValueError("Invalid glyph_map entry: " + str(entry))
         
-        if printing:
-            print("All mentioned from indices: ", mentioned_from_indices)
-            print("All mentioned to indices: ", mentioned_to_indices)
         
         remaining_from_indices = [i for i in range(len(A)) if i not in mentioned_from_indices]
         remaining_to_indices = [i for i in range(len(B)) if i not in mentioned_to_indices]
+        if printing:
+            print("All mentioned from indices: ", mentioned_from_indices)
+            print("All mentioned to indices: ", mentioned_to_indices)
+            print(f"All remaining from indices (length {len(remaining_from_indices)}): ", remaining_from_indices)
+            print(f"All remaining to indices (length {len(remaining_to_indices)}):", remaining_to_indices)
         
-        if not len(remaining_from_indices) == len(remaining_to_indices):
+        if not len(remaining_from_indices) == len(remaining_to_indices) and not auto_resolve:
             print("Error: lengths of unmentioned indices do not match.")
-            print(f"Remaining from indices (length {len(remaining_from_indices)}): ", remaining_from_indices)
-            print(f"Remaining to indices (length {len(remaining_to_indices)}): ", remaining_to_indices)
             show_indices = True
-        elif printing:
-            print("Remaining from indices: ", remaining_from_indices)
-            print("Remaining to indices: ", remaining_to_indices)
         
         if show_indices:
             print("Showing indices...")
@@ -118,8 +117,14 @@ class TransformByGlyphMap(AnimationGroup):
                 lag_ratio=0.5
             )
         else:
-            for i,j in zip(remaining_from_indices, remaining_to_indices):
-                animations.append(ReplacementTransform(A[i], B[j], **kwargs))
+            if auto_resolve:
+                for j in remaining_to_indices:
+                    animations.append(Succession(Wait(auto_resolve_delay), default_introducer(B[j])))
+                for i in remaining_from_indices:
+                    animations.append(Succession(Wait(auto_resolve_delay), default_remover(A[i])))
+            else:
+                for i,j in zip(remaining_from_indices, remaining_to_indices):
+                    animations.append(ReplacementTransform(A[i], B[j], **kwargs))
             super().__init__(*animations, **kwargs)
 
 

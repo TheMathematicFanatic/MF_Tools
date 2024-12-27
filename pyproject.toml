@@ -6,7 +6,6 @@ authors = ["John Connell <johnconnelltutor@gmail.com>"]
 license = "MIT"
 repository = "https://github.com/TheMathematicFanatic/MF_Tools"
 readme = "README.md"
-exclude = ["demo/*"]
 
 [tool.poetry.dependencies]
 python = ">=3.8"
