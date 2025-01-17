@@ -3,7 +3,7 @@ MF-Tools is a collection of various utilities that are helpful for creating Mani
 
 The most significant among them is TransformByGlyphMap, but there are also several other small tools in the collection, and I expect to continue to grow the collection over time.
 
-I recommend installing with `pip install MF-Tools`
+I recommend installing with `pip install MF_Tools`
 
 
 # Transforms
