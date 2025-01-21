@@ -75,7 +75,7 @@ class TransformByGlyphMap(AnimationGroup):
                             **entry_kwargs
                         }
                         ))
-                    if "delay" in entry_kwargs:
+                    if "delay" in entry_kwargs and entry_kwargs["delay"] != 0:
                         animations[-1] = Succession(Wait(entry_kwargs["delay"]), animations[-1])
                 mentioned_from_indices += entry[0]
             elif len(entry[0]) > 0 and len(entry[1]) > 0:
