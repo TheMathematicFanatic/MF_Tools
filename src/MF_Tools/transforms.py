@@ -154,9 +154,9 @@ class TransformByGlyphMap(AnimationGroup):
     def show_indices_animations(self, A, B, index_label_height, A_index_labels_color, B_index_labels_color):
         print("Showing indices...")
         super().__init__(
-                Create(index_labels(A, label_height=index_label_height, color=A_index_labels_color, background_stroke_width=3)),
+            Create(index_labels(A, label_height=index_label_height, color=A_index_labels_color, background_stroke_width=3)),
             FadeIn(B.next_to(A, DOWN), shift=DOWN),
-                Create(index_labels(B, label_height=index_label_height, color=B_index_labels_color, background_stroke_width=3)),
+            Create(index_labels(B, label_height=index_label_height, color=B_index_labels_color, background_stroke_width=3)),
             Wait(5),
             lag_ratio=0.5
         )

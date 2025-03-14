@@ -3,7 +3,7 @@ MF-Tools is a collection of various utilities that are helpful for creating Mani
 
 The most significant among them is TransformByGlyphMap, but there are also several other small tools in the collection, and I expect to continue to grow the collection over time.
 
-I recommend installing with `pip install MF-Tools`
+I recommend installing with `pip install MF_Tools`
 
 
 ## Recent changes:
@@ -16,6 +16,9 @@ I recommend installing with `pip install MF-Tools`
 # Transforms
 
 ## TransformByGlyphMap
+
+Video demonstration: https://youtu.be/IbVymn040T4
+
 This animation class dramatically simplifies the process and syntax of animating complicated transformations of complicated mobjects. It can be used on any VMobjects, but it was conceived to be used with MathTex for things like algebra animations. Thus, many of the default parameters are specific to this use case, and some of the language I use in this documentation is specific to this use case, such as using "glyph" and "submobject" interchangeably.
 
 Like all Transforms, it receives two mobjects, but its primary parameter after that is its glyph_map. This consists of an arbitrary number of 2-tuples of lists of integers, such as
@@ -44,7 +47,7 @@ Each glyph_map entry can receive an optional third element, which is a dictionar
 
 TransformByGlyphMap has two modes: its regular mode, which transforms mobject glyphs into one another, and its alternate `show_indices` mode, which places both the original and target mobjects vertically next to each other and reveals the index labels of the submobjects. This mode is intended to assist the user in filling out the indices of the glyph_map, without requiring them to call and then delete a different function (namely `index_labels`) to do so. The alternate mode can be triggered in several ways, including with the parameter `show_indices=True`, or by passing an empty glyph_map, or an empty glyph_map entry `([], [])`.
 
-As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. If a a glyph_map entry contains an index from the original mobject that has already occurred, a copy of that glyph is given to the corresponding animation so as not to disturb the action of the other animations already acting on that glyph. When the entire glyph_map has been parsed and converted into animations, it is expected that the all of the indices that have NOT been mentioned will be equally numerous between the original and target mobjects. If so, each of those glyphs will be `ReplacementTransform`ed into one another, in order, so that every single glyph of the original is accounted for and transformed into a glyph of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
+As the glyph_map is parsed, all of the indices that are mentioned are recorded for both the original and target mobjects. If a glyph_map entry contains an index from the original mobject that has already occurred, a copy of that glyph is given to the corresponding animation so as not to disturb the action of the other animations already acting on that glyph. When the entire glyph_map has been parsed and converted into animations, it is expected that the all of the indices that have NOT been mentioned will be equally numerous between the original and target mobjects. If so, each of those glyphs will be `ReplacementTransform`ed into one another, in order, so that every single glyph of the original is accounted for and transformed into a glyph of the target. If the unmentioned indices are not equally numerous, it will switch to `show_indices` mode. This is intended to help the user in correcting an index mistake.
 
 If you're still awake after all that, here is a demonstration:
 ```py
