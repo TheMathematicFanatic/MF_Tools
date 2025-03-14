@@ -6,6 +6,13 @@ The most significant among them is TransformByGlyphMap, but there are also sever
 I recommend installing with `pip install MF-Tools`
 
 
+## Recent changes:
+- Major refactor for my personal satisfaction and use in a future library.
+- The "delay" kwarg now alters the rate_func and run_time behind the scenes, instead of using Succession and Wait, so all Succession-related problems should be resolved.
+- An alternative mode, in which the unmentioned glyphs are simply introduced/removed (default is fades) instead of transformed into one another, can now be activated by the `auto_fade` parameter.
+- For both the original and this new alternative mode, the parameter `auto_resolve_delay` controls the delay before the unmentioned glyphs are dealt with.
+
+
 # Transforms
 
 ## TransformByGlyphMap
@@ -75,7 +82,7 @@ TransformByGlyphMap can accept many additional parameters to control its behavio
 - **mobA -** Starting mobject (required)
 - **mobB -** Target mobject (required)
 - **\*glyph_map -** Arbitrarily long sequence of tuples of lists of integers. Each one can have an optional third element which is a dictionary of kwargs. This is certainly the most important parameter and controls almost everything that happens. See above for a detailed explanation.
-- **auto_resolve -** Boolean, defaults to False. When False, the unmentioned indices will be ReplacementTransformed into one another if they are the same length, or will trigger show_indices mode if they are not the same length. If True, then unmentioned_indices will be introduced/removed by the default introducer/remover, with a small delay.
+- **auto_fade -** Boolean, defaults to False. When False, the unmentioned indices will be ReplacementTransformed into one another if they are the same length, or will trigger show_indices mode if they are not the same length. If True, then an alternative mode is used: unmentioned_indices will be introduced/removed by the default introducer/remover, and there is no need or check for the unmentioned indices to be the same length.
 - **from_copy -** Boolean, defaults to False. If True, then the original mobA will be left alone while a copy of it is transformed into mobB.
 - **mobA_submobject_index -** List of integers. Determines which submobject of mobA, or which submobject of which submobject of mobA, etc., upon which to act. For example, [0,3,1] will cause it to act on mobA[0][3][1].Defaults to [0], which is perfect for the structure of MathTex mobjects.
 - **mobB_submobject_index -** List of integers, defaults to [0]. Same as mobA_submobject_index, but for the target mobject.
@@ -84,8 +91,8 @@ TransformByGlyphMap can accept many additional parameters to control its behavio
 - **introduce_individually -** Boolean, defaults to False. If True, then introducers will be applied individually to each submobject mentioned by a glyph_map entry, rather than to them all as a VGroup. Makes no difference for FadeIn, but can be nicer for Write or GrowFromPoint.
 - **remove_individually -** Boolean, defaults to False. Same as introduce_individually, but for the removal animations.
 - **shift_fades -** Boolean, defaults to True. If True, then the introducers and removers will receive a shift parameter in the general direction of motion between the two mobjects being operated on. Really only noticeable if the two mobjects are in substantially different positions, it can be jarring for most glyphs to travel far but the fades stay in place. This shift can be overwritten by glyph_map kwargs.
-- **auto_resolve_delay -** Float, defaults to 0.5. The delay applied to the introducers/removers that are applied to the unmentioned indices when auto_resolve is True.
-- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by an empty glyph_map, by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the number of indices not mentioned in the glyph_map (if auto_resolve is False).
+- **auto_resolve_delay -** Float, defaults to 0.5. The delay applied to the introducers/removers that are applied to the unmentioned indices when auto_resolve is True, or to the ReplacementTransforms that are applied to the unmentioned indices when auto_resolve is False.
+- **show_indices -** Boolean, defaults to False. If True, then the results of the glyph_map are ultimately discarded (although it is still processed) and the indices of the submobjects being operated on are shown. This is useful for writing the glyph_map in the first place, making it easy to see which indices need to go where and in what way. This mode can also be triggered by an empty glyph_map, by the presence of an empty glyph_map entry `([], [])`, or by a mismatch in the number of indices not mentioned in the glyph_map (if auto_fade is False).
 - **A_index_labels_color -** Color, defaults to RED_D. The color of the index labels of the submobjects of mobA. Does nothing if show_indices is False and the animation proceeds successfully. The show_indices mode is only intended to be shown to the programmer and not the final viewer; I encourage you change it in the source code to your taste.
 - **B_index_labels_color -** Color, defaults to BLUE_D. Same as A_index_labels_color, but for mobB.
 - **index_label_height -** Float, defaults to 0.18. Determines the size of the index_labels. This is just the size I thought was nicest; change in the source code to your taste.
@@ -192,7 +199,7 @@ class Demo_TransformByGlyphMap7(Scene):
             ([0,1,2], [0,1,2]),
             ([0,1,2], [4,5,6]),
             default_introducer=Write,
-            auto_resolve=True
+            auto_fade=True
         ))
         self.wait()
 ```
