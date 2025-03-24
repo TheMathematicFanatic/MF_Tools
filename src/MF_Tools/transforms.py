@@ -159,8 +159,8 @@ class TransformByGlyphMap(AnimationGroup):
             index_labels_A = index_labels(A, label_height=index_label_height).set_color(A_index_labels_color).set_z_index(10).set_stroke(color=BLACK, width=3)
             index_labels_B = index_labels(B, label_height=index_label_height).set_color(B_index_labels_color).set_z_index(10).set_stroke(color=BLACK, width=3)
         elif MANIM_TYPE == 'CE':
-            index_labels_A = index_labels(A, label_height=index_label_height, color=A_index_labels_color, background_stroke_width=3)
-            index_labels_B = index_labels(B, label_height=index_label_height, color=B_index_labels_color, background_stroke_width=3)
+            index_labels_A = index_labels(A, label_height=index_label_height, color=A_index_labels_color, background_stroke_width=3).set_z_index(10)
+            index_labels_B = index_labels(B, label_height=index_label_height, color=B_index_labels_color, background_stroke_width=3).set_z_index(10)
 
         print("Showing indices...")
         super().__init__(
