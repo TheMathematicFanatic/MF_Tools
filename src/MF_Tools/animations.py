@@ -1,4 +1,4 @@
-from manim import *
+from .dual_compatibility import Animation, ORIGIN
 
 class GhostSlideFade(Animation):
     def __init__(self, mob, scale_factor=1, shift_vector=ORIGIN, rotate_amount = 0, fade_in_time=1, fade_out_time=1, lifetime=3, living_stroke_opacity=1, living_fill_opacity=0, **kwargs):

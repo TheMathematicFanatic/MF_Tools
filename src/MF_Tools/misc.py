@@ -1,5 +1,5 @@
 from copy import deepcopy
-from manim import *
+from .dual_compatibility import *
 
 
 def Vcis(theta, clockwise=False):
@@ -58,11 +58,11 @@ def CoordPair( # This is just not working that well lol. Maybe I will return to 
         x_coord = DN(tracked_mobject.get_x, **decimal_number_kwargs)
         y_coord = DN(tracked_mobject.get_y, **decimal_number_kwargs)
     result = VGroup(
-        MathTex("("),
+        dc_Tex("("),
         x_coord,
-        MathTex(","),
+        dc_Tex(","),
         y_coord,
-        MathTex(")"),
+        dc_Tex(")"),
         **kwargs
     )
     def arrange_udpater(vg):

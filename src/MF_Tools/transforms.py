@@ -1,4 +1,4 @@
-from manim import *
+from .dual_compatibility import *
 
 
 def ir(a,b): #inclusive_range
@@ -16,8 +16,8 @@ class TransformByGlyphMap(AnimationGroup):
         mobB,
         *glyph_map,
         from_copy=False,
-        mobA_submobject_index=[0],
-        mobB_submobject_index=[0],
+        mobA_submobject_index=[] if MANIM_TYPE == 'GL' else [0],
+        mobB_submobject_index=[] if MANIM_TYPE == 'GL' else [0],
         default_introducer=FadeIn,
         default_remover=FadeOut,
         introduce_individually=False,
@@ -95,7 +95,8 @@ class TransformByGlyphMap(AnimationGroup):
     def process_empty_entry(self):
         if self.printing:
             print("Empty glyph_map entry.")
-        self.show_indices = True
+        # self.show_indices = True
+        # Disabling because this will happen sometimes in SmartAlgebra
 
     def process_introducer_entry(self, A, B, entry):
         Introducer = entry[0] if entry[0] else self.default_introducer
@@ -152,11 +153,20 @@ class TransformByGlyphMap(AnimationGroup):
             self.show_indices = True
 
     def show_indices_animations(self, A, B, index_label_height, A_index_labels_color, B_index_labels_color):
+        B.next_to(A, DOWN)
+
+        if MANIM_TYPE == 'GL':
+            index_labels_A = index_labels(A, label_height=index_label_height).set_color(A_index_labels_color).set_z_index(10).set_stroke(color=BLACK, width=3)
+            index_labels_B = index_labels(B, label_height=index_label_height).set_color(B_index_labels_color).set_z_index(10).set_stroke(color=BLACK, width=3)
+        elif MANIM_TYPE == 'CE':
+            index_labels_A = index_labels(A, label_height=index_label_height, color=A_index_labels_color, background_stroke_width=3)
+            index_labels_B = index_labels(B, label_height=index_label_height, color=B_index_labels_color, background_stroke_width=3)
+
         print("Showing indices...")
         super().__init__(
-            Create(index_labels(A, label_height=index_label_height, color=A_index_labels_color, background_stroke_width=3)),
-            FadeIn(B.next_to(A, DOWN), shift=DOWN),
-            Create(index_labels(B, label_height=index_label_height, color=B_index_labels_color, background_stroke_width=3)),
+            dc_Create(index_labels_A),
+            FadeIn(B, shift=DOWN),
+            dc_Create(index_labels_B),
             Wait(5),
             lag_ratio=0.5
         )

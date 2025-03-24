@@ -1,4 +1,4 @@
-from manim import *
+from .dual_compatibility import *
 
 
 def keep_orientation(scene, *mobjects):

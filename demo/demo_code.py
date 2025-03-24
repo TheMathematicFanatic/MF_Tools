@@ -1,7 +1,9 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-from manim import *
+#from manim import *
+from manimlib import *
+from manimlib import Tex as MathTex
 from MF_Tools import *
 
 class Demo_keep_orientation(Scene):
@@ -94,7 +96,7 @@ class Demo_bounding_box(Scene):
 
 class Demo_SurroundingRectangleUnion1(Scene):
     def construct(self):
-        V = VGroup(*[Circle(0.5, color=GRAY) for _ in range(36)]).arrange_in_grid(rows=4, cols=9)
+        V = VGroup(*[Circle(0.5, color=GREY) for _ in range(36)]).arrange_in_grid(rows=4, cols=9)
         self.add(V, index_labels(V))
         groups = [
             [0,1,2,9,10],
@@ -204,7 +206,7 @@ class Demo_TransformByGlyphMap3(Scene):
 
 class Demo_TransformByGlyphMap4(Scene):
     def construct(self):
-        exp1 = MathTex("{ { 3x+2y \\over 2x+y } + 12z").scale(1.8)
+        exp1 = MathTex("{ 3x+2y \\over 2x+y } + 12z").scale(1.8)
         exp2 = MathTex("\\left( { 2x+y \\over 3x+2y } \\right) ^ {-1} + 12z").scale(1.8)
         self.add(exp1)
         self.wait()
