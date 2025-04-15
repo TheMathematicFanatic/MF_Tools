@@ -195,3 +195,19 @@ class TransformByGlyphMap(AnimationGroup):
         # These lines make it so that scene.mobjects actually contains mobB as their parent.
         scene.remove(self.mobB)
         scene.add(self.mobB)
+
+
+# Convenient way to combine multiple MathTex so that the combined object
+# has the same submobject structure as a typical single string MathTex
+if MANIM_TYPE == 'CE':
+    def CombineTex(*mathtexes):
+        subobjs = []
+        for m in mathtexes:
+            subobjs.extend(m.submobjects[0].submobjects)
+        return VGroup(VGroup(*subobjs))
+elif MANIM_TYPE == 'GL':
+    def CombineTex(*texes):
+        subobjs = []
+        for m in texes:
+            subobjs.extend(m.submobjects)
+        return VGroup(*subobjs)

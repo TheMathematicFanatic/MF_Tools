@@ -1,9 +1,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-#from manim import *
-from manimlib import *
-from manimlib import Tex as MathTex
+from manim import *
 from MF_Tools import *
 
 class Demo_keep_orientation(Scene):
@@ -91,7 +89,6 @@ class Demo_bounding_box(Scene):
         self.play(*[
             Rotate(mob, TAU, run_time=10) for mob in VG
         ])
-
 
 
 class Demo_SurroundingRectangleUnion1(Scene):
@@ -264,6 +261,23 @@ class Demo_TransformByGlyphMap7(Scene):
             ([0,1,2], [4,5,6]),
             default_introducer=Write,
             auto_resolve=True
+        ))
+        self.wait()
+
+
+class Demo_CombineTex(Scene):
+    def construct(self):
+        A = MathTex("a^2 + b^2")
+        B = MathTex("c^2 + d^2").next_to(A, DOWN)
+        C = MathTex("e^2 + f^2").next_to(B, DOWN)
+        CT = CombineTex(A,B,C)
+        D = MathTex("g^2 + h^2").next_to(CT, DOWN)
+        self.add(CT)
+        self.wait()
+        self.play(TransformByGlyphMap(CT, D,
+            ([0,1], [0,1]), ([2], [2]), ([3,4], [3,4]),
+            ([5,6], [0,1]), ([7], [2]), ([8,9], [3,4]),
+            ([10,11], [0,1]), ([12], [2]), ([13,14], [3,4]),
         ))
         self.wait()
 

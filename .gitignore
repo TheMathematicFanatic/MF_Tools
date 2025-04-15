@@ -17,3 +17,5 @@ tests/
 # Ignore pycaches
 **/__pycache__/
 .pytest_cache/
+
+.DS_STORE
