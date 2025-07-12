@@ -12,6 +12,8 @@ media/
 # Ignore tests for now
 tests/
 
+# Ignore workspace file
+workspace.py
 
 
 # Ignore pycaches
