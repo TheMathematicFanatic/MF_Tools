@@ -4,6 +4,7 @@ try:
         ShowCreation as dc_Create,
         Tex as dc_Tex,
         TexText as dc_TexText,
+        Color as dc_Color,
     )
     MANIM_TYPE = 'GL'
 
@@ -13,6 +14,7 @@ except ImportError:
         Create as dc_Create,
         MathTex as dc_Tex,
         Tex as dc_TexText,
+        ManimColor as dc_Color,
     )
     MANIM_TYPE = 'CE'
 
