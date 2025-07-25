@@ -52,16 +52,16 @@ class TransformByGlyphMap(AnimationGroup):
         B = self.mobB
         for i in mobB_submobject_index:
             B = B[i]
-    
+
         self.animations = []
         self.mentioned_from_indices = []
         self.mentioned_to_indices = []
 
         for entry in glyph_map:
             self.process_entry(A, B, entry)
-        
+
         self.check_indices(A, B, auto_fade)
-        
+
         if self.show_indices:
             self.show_indices_animations(A, B, index_label_height, A_index_labels_color, B_index_labels_color)
             return
@@ -74,23 +74,53 @@ class TransformByGlyphMap(AnimationGroup):
         super().__init__(*self.animations, **kwargs)
 
     def process_entry(self, A, B, entry):
-        assert len(entry) in [2, 3], "Invalid glyph_map entry: " + str(entry)
-        if self.printing: print("Glyph map entry: ", entry)
+        """
+        Accepts:
+          • (from_ids, to_ids)
+          • (from_ids, to_ids, kw_dict)
+          • (from_ids, to_ids, AnimClass)               # NEW
+          • (from_ids, to_ids, kw_dict, AnimClass)      # NEW
+        and routes to introducer / remover / double handlers.
+        """
+        # ---------------- validation / normalisation ------------------------
+        n = len(entry)
+        assert n in (2, 3, 4), f"Invalid glyph_map entry: {entry}"
 
-        if len(entry) == 2:
-            entry = (*entry, {})
-        self.interpret_delay(entry[2])
+        if n == 2:
+            entry = (*entry, {})                         # → (ids, ids, kw)
 
-        if not entry[0] and not entry[1]:
-            self.process_empty_entry()
-        elif not entry[0] or (isinstance(entry[0], type) and issubclass(entry[0], Animation)):
-            self.process_introducer_entry(A, B, entry)
-        elif not entry[1] or (isinstance(entry[1], type) and issubclass(entry[1], Animation)):
+        elif n == 3:
+            fr, to, third = entry
+            if isinstance(third, dict):                 # (ids, ids, kw)
+                pass
+            elif isinstance(third, type) and issubclass(third, Animation):
+                entry = (fr, to, {}, third)             # → (ids, ids, kw, Anim)
+            else:
+                raise ValueError(f"Third element must be dict or Animation: {entry}")
+
+        elif n == 4:
+            fr, to, kw, anim_cls = entry
+            if not isinstance(kw, dict) or not (isinstance(anim_cls, type) and issubclass(anim_cls, Animation)):
+                raise ValueError(f"4-tuple must be (ids, ids, kw_dict, AnimClass): {entry}")
+
+        # interpret delay only if slot-2 is kwargs
+        if isinstance(entry[2], dict):
+            self.interpret_delay(entry[2])
+
+        # introducer: from_ids empty  OR  entry[0] is Animation subclass
+        if (not entry[0]) or (isinstance(entry[0], type) and issubclass(entry[0], Animation)):
+            if not entry[1]:
+                self.process_empty_entry()
+            elif not entry[0]:
+                self.process_introducer_entry(A, B, entry)
+            else:
+                self.process_remover_entry(A, B, entry)
+        # remover: to_ids empty  OR  entry[1] is Animation subclass
+        elif (not entry[1]) or (isinstance(entry[1], type) and issubclass(entry[1], Animation)):
             self.process_remover_entry(A, B, entry)
-        elif entry[0] and entry[1]:
-            self.process_double_entry(A, B, entry)
+        # replacement / double entry
         else:
-            raise ValueError("Invalid glyph_map entry: " + str(entry))
+            self.process_double_entry(A, B, entry)
 
     def process_empty_entry(self):
         if self.printing:
@@ -117,11 +147,41 @@ class TransformByGlyphMap(AnimationGroup):
         self.mentioned_from_indices += entry[0]
 
     def process_double_entry(self, A, B, entry):
-        from_mob = VGroup(*[A[i].copy() if i in self.mentioned_from_indices else A[i] for i in entry[0]])
-        to_mob = VG(B,entry[1])
-        self.animations.append(ReplacementTransform(from_mob, to_mob, **entry[2]))
-        self.mentioned_from_indices += entry[0]
-        self.mentioned_to_indices += entry[1]
+        """
+        Handles from_ids → to_ids replacement.
+        Supports optional kwargs and/or custom Animation subclass.
+        """
+        # Normalise entry into (from_ids, to_ids, kw_dict, AnimClass)
+        if len(entry) == 2:
+            from_ids, to_ids = entry
+            kw, Anim = {}, ReplacementTransform
+
+        elif len(entry) == 3:
+            from_ids, to_ids, third = entry
+            if isinstance(third, dict):
+                kw, Anim = third, ReplacementTransform
+            elif issubclass(third, Animation):
+                kw, Anim = {}, third
+            else:
+                raise ValueError(f"3-tuple entry must be (ids, ids, kw) or (ids, ids, Anim). Got {entry}")
+
+        elif len(entry) == 4:
+            from_ids, to_ids, kw, Anim = entry
+            if not isinstance(kw, dict) or not issubclass(Anim, Animation):
+                raise ValueError(f"4-tuple must be (ids, ids, kw, Anim). Got {entry}")
+
+        else:
+            raise ValueError(f"Invalid glyph_map entry length: {entry}")
+
+        # Build the actual animation
+        from_mob = VGroup(
+            *[A[i].copy() if i in self.mentioned_from_indices else A[i] for i in from_ids]
+        )
+        to_mob = VG(B, to_ids)
+        self.animations.append(Anim(from_mob, to_mob, **kw))
+
+        self.mentioned_from_indices += from_ids
+        self.mentioned_to_indices   += to_ids
 
     def interpret_delay(self, dict):
         delay = dict.pop("delay", 0)
