@@ -108,17 +108,21 @@ class TransformByGlyphMap(AnimationGroup):
             self.interpret_delay(entry[2])
 
         # introducer: from_ids empty  OR  entry[0] is Animation subclass
-        if (not entry[0]) or (isinstance(entry[0], type) and issubclass(entry[0], Animation)):
-            if not entry[1]:
-                self.process_empty_entry()
-            elif not entry[0]:
-                self.process_introducer_entry(A, B, entry)
-            else:
-                self.process_remover_entry(A, B, entry)
-        # remover: to_ids empty  OR  entry[1] is Animation subclass
-        elif (not entry[1]) or (isinstance(entry[1], type) and issubclass(entry[1], Animation)):
+        if not entry[0] and not entry[1]:
+            self.process_empty_entry()
+
+        elif (not entry[0]) or (
+                isinstance(entry[0], type) and issubclass(entry[0], Animation)
+        ):
+            # introducer: 'from' list empty  OR  first slot is an Animation class
+            self.process_introducer_entry(A, B, entry)
+
+        elif (not entry[1]) or (
+                isinstance(entry[1], type) and issubclass(entry[1], Animation)
+        ):
+            # remover: 'to' list empty  OR  second slot is an Animation class
             self.process_remover_entry(A, B, entry)
-        # replacement / double entry
+
         else:
             self.process_double_entry(A, B, entry)
 
