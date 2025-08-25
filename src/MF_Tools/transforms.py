@@ -18,6 +18,7 @@ class TransformByGlyphMap(AnimationGroup):
         from_copy=False,
         mobA_submobject_index=[] if MANIM_TYPE == 'GL' else [0],
         mobB_submobject_index=[] if MANIM_TYPE == 'GL' else [0],
+        default_transformer=ReplacementTransform,
         default_introducer=FadeIn,
         default_remover=FadeOut,
         introduce_individually=False,
@@ -29,13 +30,14 @@ class TransformByGlyphMap(AnimationGroup):
         A_index_labels_color=RED_D,
         B_index_labels_color=BLUE_D,
         index_label_height=0.2,
-        printing=False,
+        printing=None,
         **kwargs
         ):
 
         self.mobA = mobA
         self.mobB = mobB
 
+        self.default_transformer = default_transformer
         self.default_introducer = default_introducer
         self.default_remover = default_remover
         self.introduce_individually=introduce_individually
@@ -80,23 +82,30 @@ class TransformByGlyphMap(AnimationGroup):
         if len(entry) == 2:
             entry = (*entry, {})
         self.interpret_delay(entry[2])
+        
+        def is_animation_class(entry_value):
+            return isinstance(entry_value, type) and issubclass(entry_value, Animation)
 
-        if not entry[0] and not entry[1]:
-            self.process_empty_entry()
-        elif not entry[0] or (isinstance(entry[0], type) and issubclass(entry[0], Animation)):
-            self.process_introducer_entry(A, B, entry)
-        elif not entry[1] or (isinstance(entry[1], type) and issubclass(entry[1], Animation)):
-            self.process_remover_entry(A, B, entry)
-        elif entry[0] and entry[1]:
-            self.process_double_entry(A, B, entry)
-        else:
+        def is_empty(entry_value):
+            return not entry_value or is_animation_class(entry_value)
+
+        try:
+            if is_empty(entry[0]) and is_empty(entry[1]):
+                self.process_empty_entry()
+            elif is_empty(entry[0]):
+                self.process_introducer_entry(A, B, entry)
+            elif is_empty(entry[1]):
+                self.process_remover_entry(A, B, entry)
+            else:
+                self.process_double_entry(A, B, entry)
+        except:
             raise ValueError("Invalid glyph_map entry: " + str(entry))
 
-    def process_empty_entry(self):
+    def process_empty_entry(self, A, B, entry):
         if self.printing:
-            print("Empty glyph_map entry.")
+            print("Empty glyph_map entry: " + str(entry))
         # self.show_indices = True
-        # Disabling because this will happen sometimes in SmartAlgebra
+        # Disabling because this will happen sometimes in MF_Algebra
 
     def process_introducer_entry(self, A, B, entry):
         Introducer = entry[0] if entry[0] else self.default_introducer
@@ -117,9 +126,13 @@ class TransformByGlyphMap(AnimationGroup):
         self.mentioned_from_indices += entry[0]
 
     def process_double_entry(self, A, B, entry):
+        if "transform_class" in entry[2]:
+            Transformer = entry[2]["transform_class"]
+        else:
+            Transformer = self.default_transformer
         from_mob = VGroup(*[A[i].copy() if i in self.mentioned_from_indices else A[i] for i in entry[0]])
         to_mob = VG(B,entry[1])
-        self.animations.append(ReplacementTransform(from_mob, to_mob, **entry[2]))
+        self.animations.append(Transformer(from_mob, to_mob, **entry[2]))
         self.mentioned_from_indices += entry[0]
         self.mentioned_to_indices += entry[1]
 
@@ -143,14 +156,21 @@ class TransformByGlyphMap(AnimationGroup):
     def check_indices(self, A, B, auto_fade):
         self.remaining_from_indices = [i for i in range(len(A)) if i not in self.mentioned_from_indices]
         self.remaining_to_indices = [i for i in range(len(B)) if i not in self.mentioned_to_indices]
-        if self.printing:
-            print("All mentioned from indices: ", self.mentioned_from_indices)
-            print("All mentioned to indices: ", self.mentioned_to_indices)
-            print(f"All remaining from indices (length {len(self.remaining_from_indices)}): ", self.remaining_from_indices)
-            print(f"All remaining to indices (length {len(self.remaining_to_indices)}):", self.remaining_to_indices)
         if not len(self.remaining_from_indices) == len(self.remaining_to_indices) and not auto_fade:
             print("Error: lengths of unmentioned indices do not match.")
             self.show_indices = True
+            if self.printing is not False:
+                self.printing = True
+        if self.printing:
+            print("-----------")
+            print("All mentioned from indices: ")
+            print(self.mentioned_from_indices)
+            print("All mentioned to indices: ")
+            print(self.mentioned_to_indices)
+            print(f"All remaining from indices (length {len(self.remaining_from_indices)}): ")
+            print(self.remaining_from_indices)
+            print(f"All remaining to indices (length {len(self.remaining_to_indices)}):")
+            print(self.remaining_to_indices)
 
     def show_indices_animations(self, A, B, index_label_height, A_index_labels_color, B_index_labels_color):
         B.next_to(A, DOWN)

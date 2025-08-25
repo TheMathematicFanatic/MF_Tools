@@ -1,8 +1,9 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-from manim import *
 from MF_Tools import *
+from MF_Tools.dual_compatibility import *
+MathTex = dc_Tex
 
 class Demo_keep_orientation(Scene):
     def construct(self):
@@ -196,7 +197,8 @@ class Demo_TransformByGlyphMap3(Scene):
         self.wait()
         self.play(TransformByGlyphMap(exp1, exp2,
             ([7,9], [4,5]),
-            ([8], [], {"shift":exp2[0][5].get_center() - exp1[0][9].get_center()}),
+            ([8], [], {"shift":exp2[0][5].get_center() - exp1[0][9].get_center()}), #CE
+            # ([8], [], {"shift":exp2[5].get_center() - exp1[9].get_center()}), #GL
         ))
         self.wait()
 
@@ -260,7 +262,7 @@ class Demo_TransformByGlyphMap7(Scene):
             ([0,1,2], [0,1,2]),
             ([0,1,2], [4,5,6]),
             default_introducer=Write,
-            auto_resolve=True
+            auto_fade=True
         ))
         self.wait()
 
