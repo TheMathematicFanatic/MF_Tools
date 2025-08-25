@@ -76,11 +76,9 @@ if MANIM_TYPE == 'GL':
             self.submob_dict[key] = mob
             super().add(value)
 
-    
     Mobject.get_critical_point = Mobject.get_bounding_box_point
 
 
 if MANIM_TYPE == 'CE':
-    
     Mobject.get_bounding_box_point = Mobject.get_critical_point
 
