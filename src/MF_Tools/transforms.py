@@ -89,17 +89,14 @@ class TransformByGlyphMap(AnimationGroup):
         def is_empty(entry_value):
             return not entry_value or is_animation_class(entry_value)
 
-        try:
-            if is_empty(entry[0]) and is_empty(entry[1]):
-                self.process_empty_entry()
-            elif is_empty(entry[0]):
-                self.process_introducer_entry(A, B, entry)
-            elif is_empty(entry[1]):
-                self.process_remover_entry(A, B, entry)
-            else:
-                self.process_double_entry(A, B, entry)
-        except:
-            raise ValueError("Invalid glyph_map entry: " + str(entry))
+        if is_empty(entry[0]) and is_empty(entry[1]):
+            self.process_empty_entry(A, B, entry)
+        elif is_empty(entry[0]):
+            self.process_introducer_entry(A, B, entry)
+        elif is_empty(entry[1]):
+            self.process_remover_entry(A, B, entry)
+        else:
+            self.process_double_entry(A, B, entry)
 
     def process_empty_entry(self, A, B, entry):
         if self.printing:
