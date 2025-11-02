@@ -1,4 +1,4 @@
-__version__ = '1.4.3'
+__version__ = '1.4.4'
 __author__ = 'John Connell - The Mathematic Fanatic'
 __description__ = 'Collection of helpful utilities for Manim'
 
@@ -10,4 +10,5 @@ from .misc import *
 from .animations import *
 from .VT_sliders import *
 from .rescaling import *
+from .debug import *
 
