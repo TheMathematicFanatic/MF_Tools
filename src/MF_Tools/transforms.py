@@ -62,8 +62,12 @@ class TransformByGlyphMap(AnimationGroup):
 
         for entry in glyph_map:
             self.process_entry(A, B, entry)
-        
-        self.check_indices(A, B, auto_fade)
+
+        self.remaining_from_indices = [i for i in range(len(A)) if i not in self.mentioned_from_indices]
+        self.remaining_to_indices = [i for i in range(len(B)) if i not in self.mentioned_to_indices]
+
+        if not auto_fade and not auto_morph:
+            self.check_indices(A, B)
         
         if self.show_indices:
             self.show_indices_animations(A, B, index_label_height, A_index_labels_color, B_index_labels_color)
@@ -153,10 +157,8 @@ class TransformByGlyphMap(AnimationGroup):
         dict["run_time"] = new_run_time
         return dict
 
-    def check_indices(self, A, B, auto_fade):
-        self.remaining_from_indices = [i for i in range(len(A)) if i not in self.mentioned_from_indices]
-        self.remaining_to_indices = [i for i in range(len(B)) if i not in self.mentioned_to_indices]
-        if not len(self.remaining_from_indices) == len(self.remaining_to_indices) and not auto_fade:
+    def check_indices(self, A, B):
+        if not len(self.remaining_from_indices) == len(self.remaining_to_indices):
             print("Error: lengths of unmentioned indices do not match.")
             self.show_indices = True
             if self.printing is not False:

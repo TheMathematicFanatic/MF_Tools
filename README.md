@@ -213,6 +213,23 @@ class Demo_TransformByGlyphMap7(Scene):
 ```
 ![](/demo/resources/Demo_TransformByGlyphMap7.gif)
 
+```py
+class Demo_TransformByGlyphMap8(Scene):
+    def construct(self):
+        exp1 = MathTex('\\sin(\\arctan(x))')
+        exp2 = MathTex('{ {x} \\over {\\sqrt{1+x^2}} }')
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([11], [0]),
+            ([11], [6]),
+            auto_morph=True,
+            auto_resolve_kwargs={'path_arc':PI/3, 'lag_ratio':0.03, 'delay':0.25}
+        ))
+        self.wait()
+```
+![](/demo/resources/Demo_TransformByGlyphMap8.gif)
+
 
 # Common Updaters
 

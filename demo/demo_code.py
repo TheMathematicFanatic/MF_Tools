@@ -123,7 +123,7 @@ class Demo_SurroundingRectangleUnion2(Scene):
             for district in Districts
         ])
         self.add(voters)
-        self.play(Create(Borders))
+        self.play(dc_Create(Borders))
         self.wait()
         self.play(buffvt@0.4)
         self.wait()
@@ -263,6 +263,21 @@ class Demo_TransformByGlyphMap7(Scene):
             ([0,1,2], [4,5,6]),
             default_introducer=Write,
             auto_fade=True
+        ))
+        self.wait()
+
+
+class Demo_TransformByGlyphMap8(Scene):
+    def construct(self):
+        exp1 = MathTex('\\sin(\\arctan(x))')
+        exp2 = MathTex('{ {x} \\over {\\sqrt{1+x^2}} }')
+        self.add(exp1)
+        self.wait()
+        self.play(TransformByGlyphMap(exp1, exp2,
+            ([11], [0]),
+            ([11], [6]),
+            auto_morph=True,
+            auto_resolve_kwargs={'path_arc':PI/3, 'lag_ratio':0.03, 'delay':0.25}
         ))
         self.wait()
 
