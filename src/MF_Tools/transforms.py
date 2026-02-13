@@ -25,6 +25,7 @@ class TransformByGlyphMap(AnimationGroup):
         remove_individually=False,
         shift_fades=False,
         auto_fade=False,
+        auto_morph=False,
         auto_resolve_delay=0,
         show_indices=False,
         A_index_labels_color=RED_D,
@@ -70,6 +71,8 @@ class TransformByGlyphMap(AnimationGroup):
 
         if auto_fade:
             self.process_auto_fade(A, B, auto_resolve_delay)
+        elif auto_morph:
+            self.process_auto_morph(A, B, auto_resolve_delay)
         else:
             self.process_auto_transform(A, B, auto_resolve_delay)
 
@@ -193,6 +196,10 @@ class TransformByGlyphMap(AnimationGroup):
             self.process_entry(A, B, ([i], [], {"delay":auto_resolve_delay}))
         for j in self.remaining_to_indices:
             self.process_entry(A, B, ([], [j], {"delay":auto_resolve_delay}))
+
+    def process_auto_morph(self, A, B, auto_resolve_delay):
+        I,J = self.remaining_from_indices, self.remaining_to_indices
+        self.process_entry(A, B, (I, J, {"delay":auto_resolve_delay}))
 
     def process_auto_transform(self, A, B, auto_resolve_delay):
         for i,j in zip(self.remaining_from_indices, self.remaining_to_indices):

@@ -14,8 +14,8 @@ def debug_glyph(
 		Dot(d[0], radius=0.01*max(glyph_mobject.get_width(), glyph_mobject.get_height()))
 		for d in glyph_mobject.data
 	])
-	glyph_mobject.data_dots[::2].set_opacity(0.25)
-	glyph_mobject.data_dots[1::2].set_opacity(0.1)
+	glyph_mobject.data_dots[::2].set_opacity(0.5).set_color(GREEN_D)
+	glyph_mobject.data_dots[1::2].set_opacity(0.25).set_color(RED_D)
 	glyph_mobject.set_opacity(0.1)
 	scene.add(glyph_mobject.data_dots)
 	if writing_dot:
