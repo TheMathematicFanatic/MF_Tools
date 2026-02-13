@@ -15,23 +15,23 @@ class TransformByGlyphMap(AnimationGroup):
         mobA,
         mobB,
         *glyph_map,
-        from_copy=False,
-        mobA_submobject_index=[] if MANIM_TYPE == 'GL' else [0],
-        mobB_submobject_index=[] if MANIM_TYPE == 'GL' else [0],
-        default_transformer=ReplacementTransform,
-        default_introducer=FadeIn,
-        default_remover=FadeOut,
-        introduce_individually=False,
-        remove_individually=False,
-        shift_fades=False,
-        auto_fade=False,
-        auto_morph=False,
-        auto_resolve_delay=0,
-        show_indices=False,
-        A_index_labels_color=RED_D,
-        B_index_labels_color=BLUE_D,
-        index_label_height=0.2,
-        printing=None,
+        from_copy = False,
+        mobA_submobject_index = [] if MANIM_TYPE == 'GL' else [0],
+        mobB_submobject_index = [] if MANIM_TYPE == 'GL' else [0],
+        default_transformer = ReplacementTransform,
+        default_introducer = FadeIn,
+        default_remover = FadeOut,
+        introduce_individually = False,
+        remove_individually = False,
+        shift_fades = False,
+        auto_fade = False,
+        auto_morph = False,
+        auto_resolve_kwargs = {},
+        show_indices = False,
+        A_index_labels_color = RED_D,
+        B_index_labels_color = BLUE_D,
+        index_label_height = 0.2,
+        printing = None,
         **kwargs
         ):
 
@@ -41,9 +41,9 @@ class TransformByGlyphMap(AnimationGroup):
         self.default_transformer = default_transformer
         self.default_introducer = default_introducer
         self.default_remover = default_remover
-        self.introduce_individually=introduce_individually
-        self.remove_individually=remove_individually
-        self.shift_fades=shift_fades
+        self.introduce_individually = introduce_individually
+        self.remove_individually = remove_individually
+        self.shift_fades = shift_fades
 
         self.show_indices = show_indices or len(glyph_map)==0
         self.printing = printing
@@ -70,11 +70,11 @@ class TransformByGlyphMap(AnimationGroup):
             return
 
         if auto_fade:
-            self.process_auto_fade(A, B, auto_resolve_delay)
+            self.process_auto_fade(A, B, auto_resolve_kwargs)
         elif auto_morph:
-            self.process_auto_morph(A, B, auto_resolve_delay)
+            self.process_auto_morph(A, B, auto_resolve_kwargs)
         else:
-            self.process_auto_transform(A, B, auto_resolve_delay)
+            self.process_auto_transform(A, B, auto_resolve_kwargs)
 
         super().__init__(*self.animations, **kwargs)
 
@@ -191,19 +191,19 @@ class TransformByGlyphMap(AnimationGroup):
             lag_ratio=0.5
         )
 
-    def process_auto_fade(self, A, B, auto_resolve_delay):
+    def process_auto_fade(self, A, B, auto_resolve_kwargs):
         for i in self.remaining_from_indices:
-            self.process_entry(A, B, ([i], [], {"delay":auto_resolve_delay}))
+            self.process_entry(A, B, ([i], [], auto_resolve_kwargs))
         for j in self.remaining_to_indices:
-            self.process_entry(A, B, ([], [j], {"delay":auto_resolve_delay}))
+            self.process_entry(A, B, ([], [j], auto_resolve_kwargs))
 
-    def process_auto_morph(self, A, B, auto_resolve_delay):
+    def process_auto_morph(self, A, B, auto_resolve_kwargs):
         I,J = self.remaining_from_indices, self.remaining_to_indices
-        self.process_entry(A, B, (I, J, {"delay":auto_resolve_delay}))
+        self.process_entry(A, B, (I, J, auto_resolve_kwargs))
 
-    def process_auto_transform(self, A, B, auto_resolve_delay):
+    def process_auto_transform(self, A, B, auto_resolve_kwargs):
         for i,j in zip(self.remaining_from_indices, self.remaining_to_indices):
-            self.process_entry(A, B, ([i], [j], {"delay":auto_resolve_delay}))
+            self.process_entry(A, B, ([i], [j], auto_resolve_kwargs))
 
     def begin(self):
         # Save and later restore mobA so that it is unharmed by the transform
