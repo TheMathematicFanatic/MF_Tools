@@ -19,8 +19,11 @@ class TransformByGlyphMap(AnimationGroup):
         mobA_submobject_index = [] if MANIM_TYPE == 'GL' else [0],
         mobB_submobject_index = [] if MANIM_TYPE == 'GL' else [0],
         default_transformer = ReplacementTransform,
+		default_transformer_kwargs = {},
         default_introducer = FadeIn,
+		default_introducer_kwargs = {},
         default_remover = FadeOut,
+		default_remover_kwargs = {},
         introduce_individually = False,
         remove_individually = False,
         shift_fades = False,
@@ -39,8 +42,11 @@ class TransformByGlyphMap(AnimationGroup):
         self.mobB = mobB
 
         self.default_transformer = default_transformer
+        self.default_transformer_kwargs = default_transformer_kwargs
         self.default_introducer = default_introducer
+        self.default_introducer_kwargs = default_introducer_kwargs
         self.default_remover = default_remover
+        self.default_remover_kwargs = default_remover_kwargs
         self.introduce_individually = introduce_individually
         self.remove_individually = remove_individually
         self.shift_fades = shift_fades
@@ -113,6 +119,7 @@ class TransformByGlyphMap(AnimationGroup):
 
     def process_introducer_entry(self, A, B, entry):
         Introducer = entry[0] if entry[0] else self.default_introducer
+        entry[2] = self.default_introducer_kwargs | entry[2]
         if Introducer == FadeIn and self.shift_fades and "shift" not in entry[2]:
             entry[2]["shift"] = B.get_center() - A.get_center()
         introduced_mobs = [B[i] for i in entry[1]] if self.introduce_individually else [VG(B,entry[1])]
@@ -122,6 +129,7 @@ class TransformByGlyphMap(AnimationGroup):
 
     def process_remover_entry(self, A, B, entry):
         Remover = entry[1] if entry[1] else self.default_remover
+        entry[2] = self.default_remover_kwargs | entry[2]
         if Remover == FadeOut and self.shift_fades and "shift" not in entry[2]:
             entry[2]["shift"] = B.get_center() - A.get_center()
         removed_mobs = [A[i] for i in entry[0]] if self.remove_individually else [VG(A,entry[0])]
@@ -130,10 +138,8 @@ class TransformByGlyphMap(AnimationGroup):
         self.mentioned_from_indices += entry[0]
 
     def process_double_entry(self, A, B, entry):
-        if "transform_class" in entry[2]:
-            Transformer = entry[2]["transform_class"]
-        else:
-            Transformer = self.default_transformer
+        Transformer = entry[2].get("transform_class", self.default_transformer)
+        entry[2] = self.default_transformer_kwargs | entry[2]
         from_mob = VGroup(*[A[i].copy() if i in self.mentioned_from_indices else A[i] for i in entry[0]])
         to_mob = VG(B,entry[1])
         self.animations.append(Transformer(from_mob, to_mob, **entry[2]))
@@ -226,12 +232,15 @@ class TransformByGlyphMap(AnimationGroup):
 # Convenient way to combine multiple MathTex so that the combined object
 # has the same submobject structure as a typical single string MathTex
 if MANIM_TYPE == 'CE':
+
     def CombineTex(*mathtexes):
         subobjs = []
         for m in mathtexes:
             subobjs.extend(m.submobjects[0].submobjects)
         return VGroup(VGroup(*subobjs))
+
 elif MANIM_TYPE == 'GL':
+	
     def CombineTex(*texes):
         subobjs = []
         for m in texes:
