@@ -48,3 +48,9 @@ def always_label_vertex(polygram, vertex_number, distance=0.5):
         mob.move_to(vertices[vertex_number] + vertex_direction*distance)
     return updater
 """
+
+
+def always(cls):
+	original_init = cls.__init__
+	def new_init(self, *args, **kwargs):
+		pass

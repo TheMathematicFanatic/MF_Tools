@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "MF-Tools"
-version = "1.4.5"
+version = "1.4.6"
 description = "Collection of helpful utilities for Manim"
 authors = ["John Connell <johnconnelltutor@gmail.com>"]
 license = "MIT"
