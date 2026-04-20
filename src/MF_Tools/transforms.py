@@ -40,6 +40,7 @@ class TransformByGlyphMap(AnimationGroup):
 
         self.mobA = mobA
         self.mobB = mobB
+        self.glyph_map = glyph_map
 
         self.default_transformer = default_transformer
         self.default_transformer_kwargs = default_transformer_kwargs
@@ -90,11 +91,13 @@ class TransformByGlyphMap(AnimationGroup):
 
     def process_entry(self, A, B, entry):
         assert len(entry) in [2, 3], "Invalid glyph_map entry: " + str(entry)
+
         if self.printing: print("Glyph map entry: ", entry)
+
+        entry = list(entry)
 
         if len(entry) == 2:
             entry = (*entry, {})
-        self.interpret_delay(entry[2])
         
         def is_animation_class(entry_value):
             return isinstance(entry_value, type) and issubclass(entry_value, Animation)
@@ -120,6 +123,7 @@ class TransformByGlyphMap(AnimationGroup):
     def process_introducer_entry(self, A, B, entry):
         Introducer = entry[0] if entry[0] else self.default_introducer
         entry[2] = self.default_introducer_kwargs | entry[2]
+        self.interpret_delay(entry[2])
         if Introducer == FadeIn and self.shift_fades and "shift" not in entry[2]:
             entry[2]["shift"] = B.get_center() - A.get_center()
         introduced_mobs = [B[i] for i in entry[1]] if self.introduce_individually else [VG(B,entry[1])]
@@ -130,6 +134,7 @@ class TransformByGlyphMap(AnimationGroup):
     def process_remover_entry(self, A, B, entry):
         Remover = entry[1] if entry[1] else self.default_remover
         entry[2] = self.default_remover_kwargs | entry[2]
+        self.interpret_delay(entry[2])
         if Remover == FadeOut and self.shift_fades and "shift" not in entry[2]:
             entry[2]["shift"] = B.get_center() - A.get_center()
         removed_mobs = [A[i] for i in entry[0]] if self.remove_individually else [VG(A,entry[0])]
@@ -140,6 +145,7 @@ class TransformByGlyphMap(AnimationGroup):
     def process_double_entry(self, A, B, entry):
         Transformer = entry[2].get("transform_class", self.default_transformer)
         entry[2] = self.default_transformer_kwargs | entry[2]
+        self.interpret_delay(entry[2])
         from_mob = VGroup(*[A[i].copy() if i in self.mentioned_from_indices else A[i] for i in entry[0]])
         to_mob = VG(B,entry[1])
         self.animations.append(Transformer(from_mob, to_mob, **entry[2]))
@@ -240,7 +246,7 @@ if MANIM_TYPE == 'CE':
         return VGroup(VGroup(*subobjs))
 
 elif MANIM_TYPE == 'GL':
-	
+
     def CombineTex(*texes):
         subobjs = []
         for m in texes:
