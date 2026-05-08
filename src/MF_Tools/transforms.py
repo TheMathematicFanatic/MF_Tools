@@ -37,33 +37,6 @@ class TransformByGlyphMap(AnimationGroup):
 		printing = None,
 		**kwargs
 		):
-	def __init__(
-		self,
-		mobA,
-		mobB,
-		*glyph_map,
-		from_copy = False,
-		mobA_submobject_index = [] if MANIM_TYPE == 'GL' else [0],
-		mobB_submobject_index = [] if MANIM_TYPE == 'GL' else [0],
-		default_transformer = ReplacementTransform,
-		default_transformer_kwargs = {},
-		default_introducer = FadeIn,
-		default_introducer_kwargs = {},
-		default_remover = FadeOut,
-		default_remover_kwargs = {},
-		introduce_individually = False,
-		remove_individually = False,
-		shift_fades = False,
-		auto_fade = False,
-		auto_morph = False,
-		auto_resolve_kwargs = {},
-		show_indices = False,
-		A_index_labels_color = RED_D,
-		B_index_labels_color = BLUE_D,
-		index_label_height = 0.2,
-		printing = None,
-		**kwargs
-		):
 
 		self.mobA = mobA
 		self.mobB = mobB
