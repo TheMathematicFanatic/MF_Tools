@@ -97,7 +97,7 @@ class TransformByGlyphMap(AnimationGroup):
 		entry = list(entry)
 
 		if len(entry) == 2:
-			entry = (*entry, {})
+			entry = [*entry, {}]
 		
 		def is_animation_class(entry_value):
 			return isinstance(entry_value, type) and issubclass(entry_value, Animation)
