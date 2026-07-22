@@ -3,11 +3,16 @@ from .dual_compatibility import *
 
 def keep_orientation(scene, *mobjects):
 	for mob in mobjects:
-		mob.orientation_line = Line().set_opacity(0).move_to(mob.get_center())
-		mob.add(mob.orientation_line)
+		ref = Line(ORIGIN, RIGHT).set_opacity(0).move_to(mob.get_center())
+		mob.orientation_ref = ref
+		mob.add(ref)
+		mob.add_updater(lambda m, dt: None)
 	def keep_orientation_updater(dt):
 		for mob in mobjects:
-			mob[:-1].rotate(-mob[-1].get_angle(), about_point=mob[:-1].get_center())
+			angle = mob.orientation_ref.get_angle()
+			if abs(angle) < 1e-12:
+				continue
+			mob.rotate(-angle, about_point=mob.get_center())
 	scene.add_updater(keep_orientation_updater)
 Scene.keep_orientation = keep_orientation
 
